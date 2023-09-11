@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  btangkas-super-frontend:
+    container_name: btangkas-super-frontend
+    image: btangkas-super-frontend:0.0.1
+    build: .
+    volumes:
+    - ./frontend:/app/frontend
+    ports:
+      - 2112:2112
+    restart: always
