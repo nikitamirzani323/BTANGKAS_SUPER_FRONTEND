@@ -10,7 +10,7 @@ import (
 	"github.com/nikitamirzani323/wl_super_backend_frontend/entities"
 )
 
-func Domainhome(c *fiber.Ctx) error {
+func Companyhome(c *fiber.Ctx) error {
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
 	token := strings.Split(bearToken, " ")
@@ -36,7 +36,7 @@ func Domainhome(c *fiber.Ctx) error {
 			"client_hostname": hostname,
 			"page":            client.Page,
 		}).
-		Post(PATH + "api/domain")
+		Post(PATH + "api/company")
 	if err != nil {
 		log.Println(err.Error())
 	}
@@ -66,18 +66,24 @@ func Domainhome(c *fiber.Ctx) error {
 		})
 	}
 }
-func DomainSave(c *fiber.Ctx) error {
-	type payload_domainsave struct {
-		Page          string `json:"page"`
-		Sdata         string `json:"sdata" `
-		Domain_id     int    `json:"domain_id"`
-		Domain_name   string `json:"domain_name" `
-		Domain_status string `json:"domain_status" `
+func CompanySave(c *fiber.Ctx) error {
+	type payload_companysave struct {
+		Page               string `json:"page"`
+		Sdata              string `json:"sdata" `
+		Company_id         int    `json:"company_id"`
+		Company_code       string `json:"company_code" `
+		Company_name       string `json:"company_name" `
+		Company_idcurr     string `json:"company_idcurr" `
+		Company_nmowner    string `json:"company_nmowner" `
+		Company_phoneowner string `json:"company_phoneowner" `
+		Company_emailowner string `json:"company_emailowner" `
+		Company_url        string `json:"company_url" `
+		Company_status     string `json:"company_status" `
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
 	token := strings.Split(bearToken, " ")
-	client := new(payload_domainsave)
+	client := new(payload_companysave)
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -96,14 +102,20 @@ func DomainSave(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname": hostname,
-			"page":            client.Page,
-			"sdata":           client.Sdata,
-			"domain_id":       client.Domain_id,
-			"domain_name":     client.Domain_name,
-			"domain_status":   client.Domain_status,
+			"client_hostname":    hostname,
+			"page":               client.Page,
+			"sdata":              client.Sdata,
+			"company_id":         client.Company_id,
+			"company_code":       client.Company_code,
+			"company_name":       client.Company_name,
+			"company_idcurr":     client.Company_idcurr,
+			"company_nmowner":    client.Company_nmowner,
+			"company_phoneowner": client.Company_phoneowner,
+			"company_emailowner": client.Company_emailowner,
+			"company_url":        client.Company_url,
+			"company_status":     client.Company_status,
 		}).
-		Post(PATH + "api/domainsave")
+		Post(PATH + "api/companysave")
 	if err != nil {
 		log.Println(err.Error())
 	}
