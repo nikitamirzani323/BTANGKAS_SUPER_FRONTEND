@@ -7,6 +7,7 @@
 	import Admin from "./pages/admin/Admin.svelte";
 	import Adminrule from "./pages/adminrule/Adminrule.svelte";
 	import Currency from "./pages/currency/Currency.svelte";
+	import Listpoint from "./pages/listpoint/Listpoint.svelte";
 	import Login from "./pages/Login.svelte";
 	import NotFound from "./pages/NotFound.svelte";
 	export let table_header_font;
@@ -31,7 +32,13 @@
 				},
 				component: Dashboard,
 			}),
-			
+			"/listpoint": wrap({
+				component: Listpoint,
+				props: {
+					table_header_font: table_header_font,
+					table_body_font: table_body_font,
+				},
+			}),
 			"/currency": wrap({
 				component: Currency,
 				props: {
