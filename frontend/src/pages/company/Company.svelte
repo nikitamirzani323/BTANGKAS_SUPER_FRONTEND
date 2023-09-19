@@ -75,14 +75,14 @@
                         },
                     ];
                 }
-                for (var i = 0; i < record_curr.length; i++) {
-                    listCurr = [
-                        ...listCurr,
-                        {
-                            curr_id: record_curr[i]["curr_id"],
-                        },
-                    ];
-                }
+            }
+            for (var i = 0; i < record_curr.length; i++) {
+                listCurr = [
+                    ...listCurr,
+                    {
+                        curr_id: record_curr[i]["curr_id"],
+                    },
+                ];
             }
         } else {
             logout();

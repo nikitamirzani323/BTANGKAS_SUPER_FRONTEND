@@ -8,6 +8,7 @@
 	import Adminrule from "./pages/adminrule/Adminrule.svelte";
 	import Currency from "./pages/currency/Currency.svelte";
 	import Company from "./pages/company/Company.svelte";
+	import Companyadminrule from "./pages/companyadminrule/Companyadminrule.svelte";
 	import Listpoint from "./pages/listpoint/Listpoint.svelte";
 	import Login from "./pages/Login.svelte";
 	import NotFound from "./pages/NotFound.svelte";
@@ -35,6 +36,13 @@
 			}),
 			"/company": wrap({
 				component: Company,
+				props: {
+					table_header_font: table_header_font,
+					table_body_font: table_body_font,
+				},
+			}),
+			"/companyadminrule": wrap({
+				component: Companyadminrule,
 				props: {
 					table_header_font: table_header_font,
 					table_body_font: table_body_font,

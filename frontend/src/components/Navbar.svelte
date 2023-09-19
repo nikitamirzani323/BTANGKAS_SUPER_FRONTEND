@@ -37,6 +37,8 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li>
                                 <a class="dropdown-item" use:link href="/company" style="font-size: 13px;">COMPANY</a>
+                                <a class="dropdown-item" use:link href="/companyadminrule" style="font-size: 13px;">COMPANY ADMIN</a>
+                                <a class="dropdown-item" use:link href="/companyadminrule" style="font-size: 13px;">COMPANY ADMINRULE</a>
                                 <a class="dropdown-item" use:link href="/listpoint" style="font-size: 13px;">LISTPOINT MANAGEMENT</a>
                                 <a class="dropdown-item" use:link href="/currency" style="font-size: 13px;">CURRENCY MANAGEMENT</a>
                                 <a class="dropdown-item" use:link href="/admin" style="font-size: 13px;">ADMIN MANAGEMENT</a>
