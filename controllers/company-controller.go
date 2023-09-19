@@ -10,6 +10,13 @@ import (
 	"github.com/nikitamirzani323/wl_super_backend_frontend/entities"
 )
 
+type responsecompany struct {
+	Status   int         `json:"status"`
+	Message  string      `json:"message"`
+	Listcurr interface{} `json:"listcurr"`
+	Record   interface{} `json:"record"`
+}
+
 func Companyhome(c *fiber.Ctx) error {
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
@@ -28,7 +35,7 @@ func Companyhome(c *fiber.Ctx) error {
 	render_page := time.Now()
 	axios := resty.New()
 	resp, err := axios.R().
-		SetResult(responsedefault{}).
+		SetResult(responsecompany{}).
 		SetAuthToken(token[1]).
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
@@ -49,13 +56,14 @@ func Companyhome(c *fiber.Ctx) error {
 	log.Println("  Received At:", resp.ReceivedAt())
 	log.Println("  Body       :\n", resp)
 	log.Println()
-	result := resp.Result().(*responsedefault)
+	result := resp.Result().(*responsecompany)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
-			"status":  result.Status,
-			"message": result.Message,
-			"record":  result.Record,
-			"time":    time.Since(render_page).String(),
+			"status":   result.Status,
+			"message":  result.Message,
+			"record":   result.Record,
+			"listcurr": result.Listcurr,
+			"time":     time.Since(render_page).String(),
 		})
 	} else {
 		result_error := resp.Error().(*responseerror)
@@ -70,8 +78,7 @@ func CompanySave(c *fiber.Ctx) error {
 	type payload_companysave struct {
 		Page               string `json:"page"`
 		Sdata              string `json:"sdata" `
-		Company_id         int    `json:"company_id"`
-		Company_code       string `json:"company_code" `
+		Company_id         string `json:"company_id"`
 		Company_name       string `json:"company_name" `
 		Company_idcurr     string `json:"company_idcurr" `
 		Company_nmowner    string `json:"company_nmowner" `
@@ -106,7 +113,6 @@ func CompanySave(c *fiber.Ctx) error {
 			"page":               client.Page,
 			"sdata":              client.Sdata,
 			"company_id":         client.Company_id,
-			"company_code":       client.Company_code,
 			"company_name":       client.Company_name,
 			"company_idcurr":     client.Company_idcurr,
 			"company_nmowner":    client.Company_nmowner,
