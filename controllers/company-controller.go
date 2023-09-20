@@ -16,6 +16,13 @@ type responsecompany struct {
 	Listcurr interface{} `json:"listcurr"`
 	Record   interface{} `json:"record"`
 }
+type responsecompanyadmin struct {
+	Status      int         `json:"status"`
+	Message     string      `json:"message"`
+	Listcompany interface{} `json:"listcompany"`
+	Listrule    interface{} `json:"listrule"`
+	Record      interface{} `json:"record"`
+}
 type responsecompanyadminrule struct {
 	Status      int         `json:"status"`
 	Message     string      `json:"message"`
@@ -126,6 +133,64 @@ func Companyadminrulehome(c *fiber.Ctx) error {
 			"message":     result.Message,
 			"record":      result.Record,
 			"listcompany": result.Listcompany,
+			"time":        time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func Companyadminhome(c *fiber.Ctx) error {
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(entities.Home)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsecompanyadmin{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname": hostname,
+			"page":            client.Page,
+		}).
+		Post(PATH + "api/companyadmin")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsecompanyadmin)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":      result.Status,
+			"message":     result.Message,
+			"record":      result.Record,
+			"listcompany": result.Listcompany,
+			"listrule":    result.Listrule,
 			"time":        time.Since(render_page).String(),
 		})
 	} else {
@@ -254,6 +319,85 @@ func CompanyadminruleSave(c *fiber.Ctx) error {
 			"companyadminrule_rule":      client.Companyadminrule_rule,
 		}).
 		Post(PATH + "api/companyadminrulesave")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func CompanyadminSave(c *fiber.Ctx) error {
+	type payload_companyadminsave struct {
+		Page                   string `json:"page"`
+		Sdata                  string `json:"sdata" `
+		Companyadmin_id        string `json:"companyadmin_id"`
+		Companyadmin_idrule    int    `json:"companyadmin_idrule" `
+		Companyadmin_idcompany string `json:"companyadmin_idcompany" `
+		Companyadmin_username  string `json:"companyadmin_username" `
+		Companyadmin_password  string `json:"companyadmin_password" `
+		Companyadmin_name      string `json:"companyadmin_name" `
+		Companyadmin_phone1    string `json:"companyadmin_phone1" `
+		Companyadmin_phone2    string `json:"companyadmin_phone2" `
+		Companyadmin_status    string `json:"companyadmin_status" `
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_companyadminsave)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":        hostname,
+			"page":                   client.Page,
+			"sdata":                  client.Sdata,
+			"companyadmin_id":        client.Companyadmin_id,
+			"companyadmin_idrule":    client.Companyadmin_idrule,
+			"companyadmin_idcompany": client.Companyadmin_idcompany,
+			"companyadmin_username":  client.Companyadmin_username,
+			"companyadmin_password":  client.Companyadmin_password,
+			"companyadmin_name":      client.Companyadmin_name,
+			"companyadmin_phone1":    client.Companyadmin_phone1,
+			"companyadmin_phone2":    client.Companyadmin_phone2,
+			"companyadmin_status":    client.Companyadmin_status,
+		}).
+		Post(PATH + "api/companyadminsave")
 	if err != nil {
 		log.Println(err.Error())
 	}
