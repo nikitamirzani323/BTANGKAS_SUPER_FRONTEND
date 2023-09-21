@@ -16,10 +16,13 @@
 	let title_page = "Company Admin"
     let sData = "";
     let username_flag = false;
+    let company_flag = false;
+    let adminrule_flag = false;
     let myModal_newentry = ""
     let css_loader = "display: none;";
     let msgloader = "";
 
+    let idrecord = ""
     let flag_btnsave = true;
     let listcompanyadminrule = []
     let company_field = ""
@@ -32,13 +35,35 @@
     let status_field = ""
 
 
-    const NewData = (e,username,pass,rule,name,status) => {
+    const NewData = (e,idrec,idcompany,idrule,username,name,phone1,phone2,status) => {
         sData = e
         if(sData == "New"){
             clearField()
         }else{
             username_flag = true
-           
+            company_flag = true
+            adminrule_flag = true
+            idrecord = idrec
+            company_field = idcompany
+            rule_field = idrule
+            username_field = username
+            name_field = name
+            phone1_field = phone1
+            phone2_field = phone2
+            status_field = status
+
+            listcompanyadminrule = [];
+            for(let i=0;i<listAdminrule.length;i++){
+                if(listAdminrule[i].companyadminrule_idcompany == idcompany){
+                    listcompanyadminrule = [...listcompanyadminrule,
+                        {
+                        companyadminrule_id: listAdminrule[i]["companyadminrule_id"],
+                        companyadminrule_idcompany: listAdminrule[i]["companyadminrule_idcompany"],
+                        companyadminrule_nmrule: listAdminrule[i]["companyadminrule_nmrule"],
+                        },
+                    ];
+                }
+            }
         }
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalentry"));
         myModal_newentry.show();
@@ -51,34 +76,62 @@
         let flag = true
         let msg = ""
         if(sData == "New"){
-            if(code_field == ""){
+            if(company_field == ""){
                 flag = false
-                msg += "The Code is required\n"
+                msg += "The Company is required\n"
+            }
+            if(rule_field == ""){
+                flag = false
+                msg += "The Rule is required\n"
+            }
+            if(username_field == ""){
+                flag = false
+                msg += "The Username is required\n"
+            }
+            if(password_field == ""){
+                flag = false
+                msg += "The Password is required\n"
             }
             if(name_field == ""){
                 flag = false
                 msg += "The Name is required\n"
             }
-            if(point_field == ""){
+            if(phone1_field == ""){
                 flag = false
-                msg += "The Point is required\n"
+                msg += "The Phone1 is required\n"
+            }
+            if(status_field == ""){
+                flag = false
+                msg += "The Status is required\n"
             }
         }else{
             if(idrecord == ""){
                 flag = false
                 msg += "The ID is required\n"
             }
-            if(code_field == ""){
+            if(company_field == ""){
                 flag = false
-                msg += "The Code is required\n"
+                msg += "The Company is required\n"
+            }
+            if(rule_field == ""){
+                flag = false
+                msg += "The Rule is required\n"
+            }
+            if(username_field == ""){
+                flag = false
+                msg += "The Username is required\n"
             }
             if(name_field == ""){
                 flag = false
-                msg += "The Domain is required\n"
+                msg += "The Name is required\n"
             }
-            if(point_field == ""){
+            if(phone1_field == ""){
                 flag = false
-                msg += "The Point is required\n"
+                msg += "The Phone1 is required\n"
+            }
+            if(status_field == ""){
+                flag = false
+                msg += "The Status is required\n"
             }
         }
         
@@ -86,7 +139,7 @@
             flag_btnsave = false;
             css_loader = "display: inline-block;";
             msgloader = "Sending...";
-            const res = await fetch("/api/listpointsave", {
+            const res = await fetch("/api/companyadminsave", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -95,10 +148,15 @@
                 body: JSON.stringify({
                     sdata: sData,
                     page:"CURR-SAVE",
-                    lispoint_id: parseInt(idrecord),
-                    lispoint_code: code_field.toUpperCase(),
-                    lispoint_name: name_field,
-                    lispoint_point: parseFloat(point_field),
+                    companyadmin_id: idrecord,
+                    companyadmin_idrule: parseInt(rule_field),
+                    companyadmin_idcompany: company_field,
+                    companyadmin_username: company_field.toLowerCase()+username_field.toLowerCase(),
+                    companyadmin_password: password_field,
+                    companyadmin_name: name_field,
+                    companyadmin_phone1: phone1_field,
+                    companyadmin_phone2: phone2_field,
+                    companyadmin_status: status_field,
                 }),
             });
             const json = await res.json();
@@ -132,7 +190,9 @@
         phone1_field = ""
         phone2_field = ""
         status_field = ""
-        
+        company_flag = false;
+        username_flag = false;
+        adminrule_flag = false;
     }
     $:{
         
@@ -149,9 +209,9 @@
                 handleSubmit();break;
         }
     }
-    function uperCase(element) {
+    function lowerCase(element) {
         function onInput(event) {
-            element.value = element.value.toUpperCase();
+            element.value = element.value.toLowerCase();
             element.value = element.value.replace(/[^A-Z0-9]/gi, '');
         }
         element.addEventListener("input", onInput);
@@ -203,10 +263,9 @@
                                     <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">&nbsp;</th>
                                     <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
                                     <th NOWRAP width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">USERNAME</th>
-                                    <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">NAME</th>
                                     <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">RULE</th>
-                                    <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">TIMEZONE</th>
-                                    <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">JOIN DATE</th>
+                                    <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">NAME</th>
+                                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">PHONE</th>
                                     <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">LAST LOGIN</th>
                                     <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">LAST IPADDRESS</th>
                                 </tr>
@@ -218,7 +277,10 @@
                                         <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                             <i 
                                                 on:click={() => {
-                                                    NewData("Edit",rec.admin_username,"",rec.admin_rule,rec.admin_nama,rec.admin_status);
+                                                    //e,idcompany,idrule,username,name,phone1,phone2,status
+                                                    NewData("Edit",rec.admin_id,rec.admin_idcompany,rec.admin_idrule,
+                                                    rec.admin_username,rec.admin_nama,rec.admin_phone1,rec.admin_phone2,
+                                                    rec.admin_status,);
                                                 }} 
                                                 class="bi bi-pencil"></i>
                                         </td>
@@ -229,10 +291,9 @@
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_no}</td>
                                         <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_username}</td>
-                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_nama}</td>
                                         <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_rule}</td>
-                                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_timezone}</td>
-                                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_joindate}</td>
+                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_nama}</td>
+                                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.admin_phone1} / {rec.admin_phone2}</td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_lastlogin}</td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_lastipaddres}</td>
                                     </tr>
@@ -272,6 +333,7 @@
                     <select
                         on:change="{handleChangeCompany}"
                         bind:value={company_field} 
+                        disabled='{company_flag}'
                         class="form-control required">
                         <option value="">--Select--</option>
                         {#each listCompany as rec }
@@ -283,6 +345,7 @@
                     <label for="exampleForm" class="form-label">Rule</label>
                     <select
                         bind:value={rule_field} 
+                        disabled='{adminrule_flag}'
                         class="form-control required">
                         <option value="">--Select--</option>
                         {#each listcompanyadminrule as rec }
@@ -293,9 +356,9 @@
                 <div class="mb-3">
                     <label for="exampleForm" class="form-label">Username</label>
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">{company_field}</span>
+                        <span class="input-group-text" id="basic-addon1">{company_field.toLowerCase()}</span>
                         <input
-                            use:uperCase 
+                            use:lowerCase 
                             bind:value={username_field}
                             disabled='{username_flag}'
                             type="text"
@@ -341,7 +404,7 @@
                     <input
                         bind:value={phone2_field}
                         type="text"
-                        class="form-control required"
+                        class="form-control "
                         placeholder="Phone2"
                         aria-label="Phone2"/>
                 </div>
@@ -350,6 +413,7 @@
                     <select
                         class="form-control required"
                         bind:value={status_field}>
+                        <option value="">--Select--</option>
                         <option value="Y">ACTIVE</option>
                         <option value="N">DEACTIVE</option>
                     </select>
