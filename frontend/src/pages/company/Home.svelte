@@ -16,7 +16,11 @@
 	export let totalrecord = 0
     let dispatch = createEventDispatcher();
 	let title_page = "COMPANY"
+	let title_idcompany = ""
+	let title_minbet = ""
     let sData = "";
+    let sDataListBet = "";
+    let sDataConfPoint = "";
     let myModal_newentry = "";
     let flag_code = false;
     let flag_btnsave = true;
@@ -32,9 +36,25 @@
     let idrecord = "";
     let searchHome = "";
     let filterHome = [];
+
+    //COMPANY LISTBET
+    let listbet_master = [];
+    let listbet_company = [];
+    let idrecord_listbet_field = 0;
+    let idcompany_listbet_field = "";
+    let minbet_listbet_field = 0;
+
+     //COMPANY CONF POINT
+    let listconfpoint_company = [];
+    let idrecord_confpoint_field = 0;
+    let idbet_confpoint_field = 0;
+    let idcompany_confpoint_field = "";
+    let point_confpoint_field = 0;
+
+
     let css_loader = "display: none;";
     let msgloader = "";
-
+    
     $: {
         if (searchHome) {
             filterHome = listHome.filter(
@@ -74,6 +94,36 @@
             update_field = update;
         }
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalentrycrud"));
+        myModal_newentry.show();
+        
+    };
+    const call_listconfpoint = (e,f) => {
+        sDataConfPoint = "New"
+        title_idcompany = idcompany_listbet_field
+        title_minbet = f
+        idbet_confpoint_field = e
+        idcompany_confpoint_field = idcompany_listbet_field
+        point_confpoint_field = 0;
+        call_listconfpoint_bycompany(e)
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modallistconfpoint"));
+        myModal_newentry.show();
+        
+    };
+    
+    const call_listbet = (e) => {
+        sDataListBet = "New"
+        title_idcompany = e
+        idrecord_listbet_field = 0;
+        idcompany_listbet_field = e;
+        minbet_listbet_field = 0;
+        call_listbet_master(e)
+        call_listbet_bycompany(e)
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modallistbet"));
+        myModal_newentry.show();
+        
+    };
+    const call_formlistbet = () => {
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modalcrudlistbetcompany"));
         myModal_newentry.show();
         
     };
@@ -176,7 +226,244 @@
             alert(msg)
         }
     }
-    
+    async function call_listconfpoint_bycompany(idbet) {
+        listconfpoint_company = [];
+        const res = await fetch("/api/companyconfpoint", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                company_idbet: parseInt(idbet),
+                company_id: idcompany_listbet_field,
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                let no = 0;
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    listconfpoint_company = [
+                        ...listconfpoint_company,
+                        {
+                        companyconf_no: no,
+                        companyconf_id: record[i]["companyconf_id"],
+                        companyconf_idbet: record[i]["companyconf_idbet"],
+                        companyconf_idpoin: record[i]["companyconf_idpoin"],
+                        companyconf_nmpoin: record[i]["companyconf_nmpoin"],
+                        companyconf_poin: record[i]["companyconf_poin"],
+                        companyconf_create: record[i]["companyconf_create"],
+                        companyconf_update: record[i]["companyconf_update"],
+                        },
+                    ];
+                }
+            }
+        }
+    }
+    async function call_listbet_master() {
+        listbet_master = [];
+        const res = await fetch("/api/listbet", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+               
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                for (var i = 0; i < record.length; i++) {
+                    listbet_master = [
+                        ...listbet_master,
+                        {
+                        lisbet_id: record[i]["lisbet_id"],
+                        lisbet_minbet: record[i]["lisbet_minbet"],
+                        },
+                    ];
+                }
+            }
+        }
+    }
+    async function call_listbet_bycompany(idcompany) {
+        listbet_company = [];
+        const res = await fetch("/api/companylistbet", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                company_id: idcompany,
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                let no = 0;
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    listbet_company = [
+                        ...listbet_company,
+                        {
+                        companylistbet_no: no,
+                        companylistbet_id: record[i]["companylistbet_id"],
+                        companylistbet_minbet: record[i]["companylistbet_minbet"],
+                        companylistbet_create: record[i]["companylistbet_create"],
+                        companylistbet_update: record[i]["companylistbet_update"],
+                        },
+                    ];
+                }
+            }
+        }
+    }
+    async function handleSave_listbet() {
+        let flag = true
+        let msg = ""
+        let min_bet = value_listbetmaster(minbet_listbet_field)
+        if(sDataListBet == "New"){
+            if(idcompany_listbet_field == ""){
+                flag = false
+                msg += "The Company is required\n"
+            }
+            if(minbet_listbet_field == ""){
+                flag = false
+                msg += "The Minbet is required\n"
+            }
+            if(parseInt(min_bet) <= 0){
+                flag = false
+                msg += "The Minbet cannot 0\n"
+            }
+        }else{
+            if(idrecord_listbet_field == "" || idrecord_listbet_field == 0){
+                flag = false
+                msg += "The ID is required\n"
+            }
+            if(idcompany_listbet_field == ""){
+                flag = false
+                msg += "The Company is required\n"
+            }
+            if(minbet_listbet_field == ""){
+                flag = false
+                msg += "The Minbet is required\n"
+            }
+            if(parseInt(min_bet) <= 0){
+                flag = false
+                msg += "The Minbet cannot 0\n"
+            }
+        }
+        
+        if(flag){
+            flag_btnsave = false;
+            css_loader = "display: inline-block;";
+            msgloader = "Sending...";
+            const res = await fetch("/api/companylistbetsave", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    sdata: sDataListBet,
+                    page:"CURR-SAVE",
+                    companylistbet_id: parseInt(idrecord_listbet_field),
+                    companylistbet_idcompany: idcompany_listbet_field,
+                    companylistbet_minbet:parseInt(min_bet),
+                }),
+            });
+            const json = await res.json();
+            if (json.status == 200) {
+                flag_btnsave = true;
+                if(sData=="New"){
+                    clearField_listbet()
+                }
+                msgloader = json.message;
+                RefreshHalaman()
+            } else if(json.status == 403){
+                flag_btnsave = true;
+                alert(json.message)
+            } else {
+                flag_btnsave = true;
+                msgloader = json.message;
+            }
+            setTimeout(function () {
+                css_loader = "display: none;";
+            }, 1000);
+        }else{
+            alert(msg)
+        }
+    }
+    async function handleSave_confpoint_generate() {
+        let flag = true
+        let msg = ""
+        if(sDataConfPoint == "New"){
+            if(idcompany_confpoint_field == ""){
+                flag = false
+                msg += "The Company is required\n"
+            }
+            if(idbet_confpoint_field == ""){
+                flag = false
+                msg += "The IDBET is required\n"
+            }
+        }else{
+            if(idcompany_confpoint_field == ""){
+                flag = false
+                msg += "The Company is required\n"
+            }
+            if(idbet_confpoint_field == ""){
+                flag = false
+                msg += "The IDBET is required\n"
+            }
+        }
+        
+        if(flag){
+            flag_btnsave = false;
+            css_loader = "display: inline-block;";
+            msgloader = "Sending...";
+            const res = await fetch("/api/companyconfpointsave", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    sdata: sDataListBet,
+                    page:"CURR-SAVE",
+                    companyconfpoint_id: parseInt(idrecord_confpoint_field),
+                    companyconfpoint_idbet: parseInt(idbet_confpoint_field),
+                    Companyconfpoint_idcompany: idcompany_confpoint_field,
+                    Companyconfpoint_point:parseInt(point_confpoint_field),
+                }),
+            });
+            const json = await res.json();
+            if (json.status == 200) {
+                flag_btnsave = true;
+                if(sData=="New"){
+                    clearField_listbet()
+                }
+                msgloader = json.message;
+                call_listconfpoint_bycompany(idbet_confpoint_field)
+            } else if(json.status == 403){
+                flag_btnsave = true;
+                alert(json.message)
+            } else {
+                flag_btnsave = true;
+                msgloader = json.message;
+            }
+            setTimeout(function () {
+                css_loader = "display: none;";
+            }, 1000);
+        }else{
+            alert(msg)
+        }
+    }
     function clearField(){
         flag_code = false
         idrecord = "";
@@ -189,6 +476,12 @@
         status_field = "";
         create_field = "";
         update_field = "";
+    }
+    function clearField_listbet(){
+        flag_code = false
+        idrecord_listbet_field = 0;
+        idcompany_listbet_field = "";
+        minbet_listbet_field = 0;
     }
     function callFunction(event){
         switch(event.detail){
@@ -231,6 +524,15 @@
         }
         return result
     }
+    function value_listbetmaster(e){
+        let value = 0
+        for(let i=0;i<listbet_master.length;i++){
+            if(e == listbet_master[i].lisbet_id){
+                value = parseInt(listbet_master[i].lisbet_minbet)
+            }
+        }
+        return value;
+    }
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -267,7 +569,7 @@
                     <table class="table table-striped ">
                         <thead>
                             <tr>
-                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" >&nbsp;</th>
+                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" colspan=2>&nbsp;</th>
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">&nbsp;</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CODE</th>
@@ -293,6 +595,12 @@
                                                 rec.home_phoneowner,rec.home_status,
                                                 rec.home_create, rec.home_update);
                                             }} class="bi bi-pencil"></i>
+                                    </td>
+                                    
+                                    <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
+                                        <i on:click={() => {
+                                                call_listbet(rec.home_id)
+                                            }} class="bi bi-file-earmark"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
                                     <td NOWRAP  style="text-align: center;vertical-align: top;font-size: 11px;">
@@ -433,5 +741,129 @@
 	</slot:template>
 </Modal>
 
+<Modal
+	modal_id="modallistbet"
+	modal_size="modal-dialog-centered"
+	modal_title="ListBet - {title_idcompany}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" >&nbsp;</th>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                    <th NOWRAP width="*" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">MINBET</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listbet_company as rec }
+                    <tr>
+                        <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
+                            <i on:click={() => {
+                                    //e,id,name,idcurr,url,owner,email,phone,status,create,update
+                                    call_listconfpoint(rec.companylistbet_id,rec.companylistbet_minbet);
+                                }} class="bi bi-pencil"></i>
+                        </td>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.companylistbet_no}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};">{new Intl.NumberFormat().format(rec.companylistbet_minbet)}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+	<slot:template slot="footer">
+        <Button on:click={() => {
+                call_formlistbet();
+            }} 
+            button_title="New"
+            button_css="btn-info"/>
+	</slot:template>
+</Modal>
 
+<Modal
+	modal_id="modalcrudlistbetcompany"
+	modal_size="modal-dialog-centered"
+	modal_title="{title_page+" "+title_idcompany+" / "+sDataListBet}"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <div class="mb-3">
+            <label for="exampleForm" class="form-label">Min Bet</label>
+            <select
+                class="form-control required"
+                style="text-align: right;"
+                bind:value={minbet_listbet_field}>
+                {#each listbet_master as rec}
+                 <option value="{rec.lisbet_id}">{new Intl.NumberFormat().format(rec.lisbet_minbet)}</option>
+                {/each}
+            </select>
+        </div>
+        {#if sDataListBet != "New"}
+            <div class="mb-3">
+                <div class="alert alert-secondary" style="font-size: 11px; padding:10px;" role="alert">
+                    Create : {create_field}<br />
+                    Update : {update_field}
+                </div>
+            </div>
+        {/if}
+	</slot:template>
+	<slot:template slot="footer">
+        {#if flag_btnsave}
+        <Button on:click={() => {
+                handleSave_listbet();
+            }} 
+            
+            button_title="Save"
+            button_css="btn-warning"/>
+        {/if}
+	</slot:template>
+</Modal>
 
+<Modal
+	modal_id="modallistconfpoint"
+	modal_size="modal-dialog-centered"
+	modal_title="Configure Point - {title_idcompany} - {title_minbet}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" >&nbsp;</th>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                    <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NAME</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">POINT</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listconfpoint_company as rec }
+                    <tr>
+                        <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
+                            <i on:click={() => {
+                                    //e,id,name,idcurr,url,owner,email,phone,status,create,update
+                                    NewData("Edit",rec.home_id, 
+                                    rec.home_name, rec.home_idcurr,rec.home_url,
+                                    rec.home_nmowner, rec.home_emailowner, 
+                                    rec.home_phoneowner,rec.home_status,
+                                    rec.home_create, rec.home_update);
+                                }} class="bi bi-pencil"></i>
+                        </td>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.companyconf_no}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyconf_nmpoin}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};">{new Intl.NumberFormat().format(rec.companyconf_poin)}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+	<slot:template slot="footer">
+        <Button on:click={() => {
+                handleSave_confpoint_generate();
+            }} 
+            button_title="Generate"
+            button_css="btn-info"/>
+	</slot:template>
+</Modal>
