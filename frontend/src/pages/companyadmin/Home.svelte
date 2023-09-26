@@ -241,6 +241,13 @@
             }
         }
     };
+    function status(e){
+        let result = "DEACTIVE"
+        if(e == "Y"){
+            result = "ACTIVE"
+        }
+        return result
+    }
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -292,7 +299,7 @@
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
                                             <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.admin_statuscss}">
-                                                {rec.admin_status}
+                                                {status(rec.admin_status)}
                                             </span>
                                         </td>
                                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.admin_no}</td>

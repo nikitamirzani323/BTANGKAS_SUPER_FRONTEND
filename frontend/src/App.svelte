@@ -11,6 +11,7 @@
 	import Companyadmin from "./pages/companyadmin/Companyadmin.svelte";
 	import Companyadminrule from "./pages/companyadminrule/Companyadminrule.svelte";
 	import Listpoint from "./pages/listpoint/Listpoint.svelte";
+	import Listbet from "./pages/listbet/Listbet.svelte";
 	import Login from "./pages/Login.svelte";
 	import NotFound from "./pages/NotFound.svelte";
 	export let table_header_font;
@@ -51,6 +52,13 @@
 			}),
 			"/companyadminrule": wrap({
 				component: Companyadminrule,
+				props: {
+					table_header_font: table_header_font,
+					table_body_font: table_body_font,
+				},
+			}),
+			"/listbet": wrap({
+				component: Listbet,
 				props: {
 					table_header_font: table_header_font,
 					table_body_font: table_body_font,

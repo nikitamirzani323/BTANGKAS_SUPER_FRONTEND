@@ -235,7 +235,7 @@
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
 </div>
-<div class="container" style="margin-top: 70px;">
+<div class="container-fluid" style="margin-top: 70px;">
     <div class="row">
         <div class="col-sm-12">
             <Button
