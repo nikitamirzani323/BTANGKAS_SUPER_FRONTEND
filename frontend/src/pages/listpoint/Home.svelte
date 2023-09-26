@@ -22,6 +22,7 @@
     let code_field = "";
     let name_field = "";
     let point_field = 0;
+    let display_field = 0;
     let create_field = "";
     let update_field = "";
     let idrecord = "";
@@ -46,7 +47,7 @@
         }
     }
     
-    const NewData = (e,id,code,name,point,create,update) => {
+    const NewData = (e,id,code,name,point,display,create,update) => {
         sData = e
         if(sData == "New"){
             clearField()
@@ -56,6 +57,7 @@
             code_field = code;
             name_field = name;
             point_field = point;
+            display_field = display;
             create_field = create;
             update_field = update;
         }
@@ -84,6 +86,10 @@
                 flag = false
                 msg += "The Point is required\n"
             }
+            if(display_field == ""){
+                flag = false
+                msg += "The Display is required\n"
+            }
         }else{
             if(idrecord == ""){
                 flag = false
@@ -100,6 +106,10 @@
             if(point_field == ""){
                 flag = false
                 msg += "The Point is required\n"
+            }
+            if(display_field == ""){
+                flag = false
+                msg += "The Display is required\n"
             }
         }
         
@@ -120,6 +130,7 @@
                     lispoint_code: code_field.toUpperCase(),
                     lispoint_name: name_field,
                     lispoint_point: parseFloat(point_field),
+                    lispoint_display: parseInt(display_field),
                 }),
             });
             const json = await res.json();
@@ -150,6 +161,7 @@
         code_field = "";
         name_field = "";
         point_field = 0;
+        display_field = 0;
         flag_code = false
         create_field = "";
         update_field = "";
@@ -233,6 +245,7 @@
                                 <th NOWRAP width="1%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CODE</th>
                                 <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">NAME</th>
                                 <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size: {table_header_font};">POINT</th>
+                                <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size: {table_header_font};">DISPLAY</th>
                             </tr>
                         </thead>
                         {#if totalrecord > 0}
@@ -241,13 +254,15 @@
                                 <tr>
                                     <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                         <i on:click={() => {
-                                                NewData("Edit",rec.home_id,rec.home_code, rec.home_name, rec.home_point,rec.home_create, rec.home_update);
+                                                NewData("Edit",rec.home_id,rec.home_code, rec.home_name, rec.home_point,rec.home_display,
+                                                rec.home_create, rec.home_update);
                                             }} class="bi bi-pencil"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
                                     <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_code}</td>
                                     <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_name}</td>
                                     <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};">{new Intl.NumberFormat().format(rec.home_point)}</td>
+                                    <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};">{rec.home_display}</td>
                                 </tr>
                             {/each}
                         </tbody>
@@ -302,6 +317,16 @@
                 class="required"
                 type="text"
                 placeholder="Point"/>
+        </div>
+        <div class="mb-3">
+            <label for="exampleForm" class="form-label">Display</label>
+            <Input
+                on:keyup={handleKeyboard_float} 
+                bind:value={display_field}
+                style="text-align: right;"
+                class="required"
+                type="text"
+                placeholder="Display"/>
         </div>
         {#if sData != "New"}
         <div class="mb-3">

@@ -33,9 +33,11 @@
     let phone1_field = ""
     let phone2_field = ""
     let status_field = ""
+    let create_field = ""
+    let update_field = ""
 
 
-    const NewData = (e,idrec,idcompany,idrule,username,name,phone1,phone2,status) => {
+    const NewData = (e,idrec,idcompany,idrule,username,name,phone1,phone2,status,create,update) => {
         sData = e
         if(sData == "New"){
             clearField()
@@ -51,6 +53,8 @@
             phone1_field = phone1
             phone2_field = phone2
             status_field = status
+            create_field = create
+            update_field = update
 
             listcompanyadminrule = [];
             for(let i=0;i<listAdminrule.length;i++){
@@ -190,6 +194,8 @@
         phone1_field = ""
         phone2_field = ""
         status_field = ""
+        create_field = ""
+        update_field = ""
         company_flag = false;
         username_flag = false;
         adminrule_flag = false;
@@ -280,7 +286,7 @@
                                                     //e,idcompany,idrule,username,name,phone1,phone2,status
                                                     NewData("Edit",rec.admin_id,rec.admin_idcompany,rec.admin_idrule,
                                                     rec.admin_username,rec.admin_nama,rec.admin_phone1,rec.admin_phone2,
-                                                    rec.admin_status,);
+                                                    rec.admin_status,rec.admin_create,rec.admin_update);
                                                 }} 
                                                 class="bi bi-pencil"></i>
                                         </td>
@@ -418,6 +424,14 @@
                         <option value="N">DEACTIVE</option>
                     </select>
                 </div>
+                {#if sData != "New"}
+                <div class="mb-3">
+                    <div class="alert alert-secondary" style="font-size: 11px; padding:10px;" role="alert">
+                        Create : {create_field}<br />
+                        Update : {update_field}
+                    </div>
+                </div>
+                {/if}
             </div>
         </div>
         

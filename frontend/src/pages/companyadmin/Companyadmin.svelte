@@ -69,6 +69,8 @@
               admin_lastipaddres: record[i]["companyadmin_ipaddress"],
               admin_status: record[i]["companyadmin_status"],
               admin_statuscss: record[i]["companyadmin_status_css"],
+              admin_create: record[i]["companyadmin_create"],
+              admin_update: record[i]["companyadmin_update"],
             },
           ];
         }

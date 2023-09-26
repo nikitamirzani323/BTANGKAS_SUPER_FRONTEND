@@ -61,6 +61,7 @@
                             home_code: record[i]["lispoint_code"],
                             home_name: record[i]["lispoint_name"],
                             home_point: record[i]["lispoint_point"],
+                            home_display: record[i]["lispoint_display"],
                             home_create: record[i]["lispoint_create"],
                             home_update: record[i]["lispoint_update"],
                         },

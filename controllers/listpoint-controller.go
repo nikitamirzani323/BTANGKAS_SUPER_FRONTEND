@@ -68,12 +68,13 @@ func Listpointhome(c *fiber.Ctx) error {
 }
 func ListpointSave(c *fiber.Ctx) error {
 	type payload_listpointsave struct {
-		Page           string `json:"page"`
-		Sdata          string `json:"sdata" `
-		Listpoint_id   int    `json:"lispoint_id" `
-		Listpoint_code string `json:"lispoint_code" `
-		Listpoint_name string `json:"lispoint_name" `
-		Lispoint_point int    `json:"lispoint_point" `
+		Page             string `json:"page"`
+		Sdata            string `json:"sdata" `
+		Listpoint_id     int    `json:"lispoint_id" `
+		Listpoint_code   string `json:"lispoint_code" `
+		Listpoint_name   string `json:"lispoint_name" `
+		Lispoint_point   int    `json:"lispoint_point" `
+		Lispoint_display int    `json:"lispoint_display" `
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
@@ -97,13 +98,14 @@ func ListpointSave(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname": hostname,
-			"page":            client.Page,
-			"sdata":           client.Sdata,
-			"lispoint_id":     client.Listpoint_id,
-			"lispoint_code":   client.Listpoint_code,
-			"lispoint_name":   client.Listpoint_name,
-			"lispoint_point":  client.Lispoint_point,
+			"client_hostname":  hostname,
+			"page":             client.Page,
+			"sdata":            client.Sdata,
+			"lispoint_id":      client.Listpoint_id,
+			"lispoint_code":    client.Listpoint_code,
+			"lispoint_name":    client.Listpoint_name,
+			"lispoint_point":   client.Lispoint_point,
+			"lispoint_display": client.Lispoint_display,
 		}).
 		Post(PATH + "api/listpointsave")
 	if err != nil {
