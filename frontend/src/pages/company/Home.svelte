@@ -40,6 +40,7 @@
     //COMPANY LISTBET
     let listbet_master = [];
     let listbet_company = [];
+    let listadmin_company = [];
     let idrecord_listbet_field = 0;
     let idcompany_listbet_field = "";
     let minbet_listbet_field = 0;
@@ -50,6 +51,9 @@
     let idbet_confpoint_field = 0;
     let idcompany_confpoint_field = "";
     let point_confpoint_field = 0;
+    let nmpoint_confpoint_field = "";
+    let create_confpoint_field = "";
+    let update_confpoint_field = "";
 
 
     let css_loader = "display: none;";
@@ -97,6 +101,25 @@
         myModal_newentry.show();
         
     };
+    const EditConfPoint = (id,idbet,nmpoin,poin,create,update) => {
+        sDataListBet = "Edit"
+        idrecord_confpoint_field = id
+        idbet_confpoint_field = idbet
+        nmpoint_confpoint_field = nmpoin
+        point_confpoint_field = poin
+        create_confpoint_field = create;
+        update_confpoint_field = update;
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modalformconfpoint"));
+        myModal_newentry.show();
+        
+    };
+    const call_listadmin = (e) => {
+        title_idcompany = e
+        call_listadmin_bycompany(e)
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modallistadmin"));
+        myModal_newentry.show();
+        
+    };
     const call_listconfpoint = (e,f) => {
         sDataConfPoint = "New"
         title_idcompany = idcompany_listbet_field
@@ -109,7 +132,6 @@
         myModal_newentry.show();
         
     };
-    
     const call_listbet = (e) => {
         sDataListBet = "New"
         title_idcompany = e
@@ -324,6 +346,42 @@
             }
         }
     }
+    async function call_listadmin_bycompany(idcompany) {
+        listadmin_company = [];
+        const res = await fetch("/api/companyadminbycompany", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                company_id: idcompany,
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                let no = 0;
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    listadmin_company = [
+                        ...listadmin_company,
+                        {
+                        companyadmin_no: no,
+                        companyadmin_id: record[i]["companyadmin_id"],
+                        companyadmin_name: record[i]["companyadmin_name"],
+                        companyadmin_tipe: record[i]["companyadmin_tipe"],
+                        companyadmin_status: record[i]["companyadmin_status"],
+                        companyadmin_status_css: record[i]["companyadmin_status_css"],
+                        companyadmin_create: record[i]["companyadmin_create"],
+                        companyadmin_update: record[i]["companyadmin_update"],
+                        },
+                    ];
+                }
+            }
+        }
+    }
     async function handleSave_listbet() {
         let flag = true
         let msg = ""
@@ -413,6 +471,10 @@
                 msg += "The IDBET is required\n"
             }
         }else{
+            if(idrecord_confpoint_field == ""){
+                flag = false
+                msg += "The ID is required\n"
+            }
             if(idcompany_confpoint_field == ""){
                 flag = false
                 msg += "The Company is required\n"
@@ -420,6 +482,14 @@
             if(idbet_confpoint_field == ""){
                 flag = false
                 msg += "The IDBET is required\n"
+            }
+            if(point_confpoint_field == ""){
+                flag = false
+                msg += "The Point is required\n"
+            }
+            if(point_confpoint_field <= 0){
+                flag = false
+                msg += "The Point cannot 0\n"
             }
         }
         
@@ -464,6 +534,7 @@
             alert(msg)
         }
     }
+    
     function clearField(){
         flag_code = false
         idrecord = "";
@@ -533,6 +604,15 @@
         }
         return value;
     }
+    const handleKeyboard_int = () => {
+        let numbera;
+		for (let i = 0; i < point_confpoint_field.length; i++) {
+			numbera = parseInt(point_confpoint_field[i]);
+			if (isNaN(numbera)) {
+				point_confpoint_field = "";
+			}
+		}
+	}
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -569,7 +649,7 @@
                     <table class="table table-striped ">
                         <thead>
                             <tr>
-                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" colspan=2>&nbsp;</th>
+                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" colspan=3>&nbsp;</th>
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">&nbsp;</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CODE</th>
@@ -596,11 +676,15 @@
                                                 rec.home_create, rec.home_update);
                                             }} class="bi bi-pencil"></i>
                                     </td>
-                                    
                                     <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                         <i on:click={() => {
                                                 call_listbet(rec.home_id)
                                             }} class="bi bi-file-earmark"></i>
+                                    </td>
+                                    <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
+                                        <i on:click={() => {
+                                                call_listadmin(rec.home_id)
+                                            }} class="bi bi-people"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
                                     <td NOWRAP  style="text-align: center;vertical-align: top;font-size: 11px;">
@@ -844,11 +928,8 @@
                         <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                             <i on:click={() => {
                                     //e,id,name,idcurr,url,owner,email,phone,status,create,update
-                                    NewData("Edit",rec.home_id, 
-                                    rec.home_name, rec.home_idcurr,rec.home_url,
-                                    rec.home_nmowner, rec.home_emailowner, 
-                                    rec.home_phoneowner,rec.home_status,
-                                    rec.home_create, rec.home_update);
+                                    EditConfPoint(rec.companyconf_id,rec.companyconf_idbet,rec.companyconf_nmpoin,rec.companyconf_poin,
+                                    rec.companyconf_create,rec.companyconf_update);
                                 }} class="bi bi-pencil"></i>
                         </td>
                         <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.companyconf_no}</td>
@@ -865,5 +946,100 @@
             }} 
             button_title="Generate"
             button_css="btn-info"/>
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modalformconfpoint"
+	modal_size="modal-dialog-centered "
+	modal_title="Update Configure Point"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <div class="mb-3">
+            <label for="exampleForm" class="form-label">Name</label>
+            <input bind:value={nmpoint_confpoint_field}
+                disabled
+                class="required form-control"
+                type="text"
+                placeholder="Name"/>
+        </div>
+        <div class="mb-3">
+            <label for="exampleForm" class="form-label">Point</label>
+            <Input
+                on:keyup={handleKeyboard_int} 
+                bind:value={point_confpoint_field}
+                style="text-align: right;"
+                class="required"
+                type="text"
+                placeholder="Point"/>
+            <div style="text-align: right; color:blue;font-size:11px;">
+                {new Intl.NumberFormat().format(point_confpoint_field)}
+            </div>
+        </div>
+        {#if sData != "New"}
+            <div class="mb-3">
+                <div class="alert alert-secondary" style="font-size: 11px; padding:10px;" role="alert">
+                    Create : {create_confpoint_field}<br />
+                    Update : {update_confpoint_field}
+                </div>
+            </div>
+        {/if}
+      
+        
+        
+        
+	</slot:template>
+	<slot:template slot="footer">
+        {#if flag_btnsave}
+        <Button on:click={() => {
+                handleSave_confpoint_generate();
+            }} 
+            button_title="Save"
+            button_css="btn-warning"/>
+        {/if}
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modallistadmin"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="ListAdmin - {title_idcompany}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={false}>
+	<slot:template slot="body">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                    <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">STATUS</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">TIPE</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">USERNAME</th>
+                    <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NAME</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">CREATE</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">UPDATE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each listadmin_company as rec }
+                    <tr>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_no}</td>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
+                            <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.companyadmin_status_css}">
+                                {status(rec.companyadmin_status)}
+                            </span>
+                        </td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_tipe}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_id}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_name}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_create}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyadmin_update}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+	<slot:template slot="footer">
 	</slot:template>
 </Modal>
