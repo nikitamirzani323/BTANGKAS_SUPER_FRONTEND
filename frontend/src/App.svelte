@@ -6,6 +6,7 @@
 	
 	import Admin from "./pages/admin/Admin.svelte";
 	import Adminrule from "./pages/adminrule/Adminrule.svelte";
+	import Pattern from "./pages/pattern/Pattern.svelte";
 	import Currency from "./pages/currency/Currency.svelte";
 	import Company from "./pages/company/Company.svelte";
 	import Companyadmin from "./pages/companyadmin/Companyadmin.svelte";
@@ -35,6 +36,13 @@
 					table_body_font: table_body_font,
 				},
 				component: Dashboard,
+			}),
+			"/pattern": wrap({
+				component: Pattern,
+				props: {
+					table_header_font: table_header_font,
+					table_body_font: table_body_font,
+				},
 			}),
 			"/company": wrap({
 				component: Company,
