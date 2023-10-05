@@ -8,14 +8,18 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_super_backend_frontend/entities"
+	"github.com/nikitamirzani323/wl_super_backend_frontend/helpers"
 )
 
 func Patternhome(c *fiber.Ctx) error {
+	type payload_patternhome struct {
+		Pattern_search string `json:"pattern_search"`
+		Pattern_page   int    `json:"pattern_page"`
+	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
 	token := strings.Split(bearToken, " ")
-	client := new(entities.Home)
+	client := new(payload_patternhome)
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
@@ -29,13 +33,14 @@ func Patternhome(c *fiber.Ctx) error {
 	render_page := time.Now()
 	axios := resty.New()
 	resp, err := axios.R().
-		SetResult(responsedefault{}).
+		SetResult(helpers.Responsepaging{}).
 		SetAuthToken(token[1]).
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
 			"client_hostname": hostname,
-			"page":            client.Page,
+			"pattern_search":  client.Pattern_search,
+			"pattern_page":    client.Pattern_page,
 		}).
 		Post(PATH + "api/pattern")
 	if err != nil {
@@ -50,13 +55,15 @@ func Patternhome(c *fiber.Ctx) error {
 	log.Println("  Received At:", resp.ReceivedAt())
 	log.Println("  Body       :\n", resp)
 	log.Println()
-	result := resp.Result().(*responsedefault)
+	result := resp.Result().(*helpers.Responsepaging)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
-			"status":  result.Status,
-			"message": result.Message,
-			"record":  result.Record,
-			"time":    time.Since(render_page).String(),
+			"status":      result.Status,
+			"perpage":     result.Perpage,
+			"totalrecord": result.Totalrecord,
+			"message":     result.Message,
+			"record":      result.Record,
+			"time":        time.Since(render_page).String(),
 		})
 	} else {
 		result_error := resp.Error().(*responseerror)
@@ -69,9 +76,13 @@ func Patternhome(c *fiber.Ctx) error {
 }
 func PatternSave(c *fiber.Ctx) error {
 	type payload_patternsave struct {
-		Page  string          `json:"page"`
-		Sdata string          `json:"sdata" `
-		Data  json.RawMessage `json:"data"`
+		Page                  string          `json:"page"`
+		Sdata                 string          `json:"sdata" `
+		Pattern_search        string          `json:"pattern_search" `
+		Pattern_page          int             `json:"pattern_page" `
+		Pattern_id            string          `json:"pattern_id" `
+		Pattern_resultcardwin string          `json:"pattern_resultcardwin" `
+		Data                  json.RawMessage `json:"data"`
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
@@ -96,10 +107,14 @@ func PatternSave(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname": hostname,
-			"page":            client.Page,
-			"sdata":           client.Sdata,
-			"pattern_list":    string(client.Data),
+			"client_hostname":       hostname,
+			"page":                  client.Page,
+			"sdata":                 client.Sdata,
+			"pattern_search":        client.Pattern_search,
+			"pattern_page":          client.Pattern_page,
+			"pattern_id":            client.Pattern_id,
+			"pattern_resultcardwin": client.Pattern_resultcardwin,
+			"pattern_list":          string(client.Data),
 		}).
 		Post(PATH + "api/patternsave")
 	if err != nil {

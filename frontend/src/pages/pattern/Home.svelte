@@ -6,24 +6,24 @@
 	import Button from "../../components/Button.svelte";
 	import Modal from "../../components/Modal.svelte";
     import { createEventDispatcher } from "svelte";
+  import { is_empty } from "svelte/internal";
 
     
 	export let table_header_font = ""
 	export let table_body_font = ""
 	export let token = ""
 	export let listHome = []
+  export let listPage = [];
 	export let totalrecord = 0
-    let dispatch = createEventDispatcher();
+  let dispatch = createEventDispatcher();
 	let title_page = "PATTERN"
     let sData = "";
     let myModal_newentry = "";
-    let flag_id_field = false;
     let flag_btnsave = true;
-    let name_field = "";
-    let multiplier_field = 0;
-    let create_field = "";
-    let update_field = "";
     let idrecord = "";
+    let resultcard = "";
+    let resultnmpoint = "";
+    let resultcardwin = "";
     let searchHome = "";
     let filterHome = [];
     let css_loader = "display: none;";
@@ -115,6 +115,7 @@
     let pattern_string = "";
     let pattern_card_string = "";
     let usedIndexes = [];
+    let pagingnow = 0;
     function shuffleArray_card(array){
         let i = 0
         while(i<7){
@@ -145,18 +146,30 @@
         }
         let status = hitung_statuswinlose(shuffleArray)
        
-        // console.log(shuffleArray)
+        // console.log(status)
         let temp_status = status[0]==false?"N":"Y"
         let temp_poin = "";
+        let temp_listwin = "";
         if(temp_status == "Y"){
             temp_poin = list_point[status[2]].code
+            // console.log("total length : " + status[1].length)
+            for(let x=0;x<status[1].length;x++){
+              if(x==status[1].length-1){
+                temp_listwin += status[1][x].id
+              }else{
+                temp_listwin += status[1][x].id+","
+              }
+            }
+            
         }
+        
         const obj = {
-				idpattern:pattern_string,
-				idcard:pattern_card_string,
-				point:temp_poin,
-				status:temp_status,
-		};
+          idpattern:pattern_string,
+          idcard:pattern_card_string,
+          point:temp_poin,
+          resultwin:temp_listwin,
+          status:temp_status,
+      };
 
         pattern_list = [obj, ...pattern_list];
         
@@ -164,6 +177,7 @@
         pattern = [];
         pattern_string = "";
         pattern_card_string = "";
+        temp_listwin = "";
         shuffleArray = [];
         shuffleArray_id = [];
     }
@@ -177,25 +191,62 @@
             i++;
         }
 
-        console.log(pattern_list)
+        // console.log(pattern_list)
     }
    
     $: {
         if (searchHome) {
             filterHome = listHome.filter(
                 (item) =>
-                    item.home_name
+                    item.home_id
                         .toLowerCase()
-                        .includes(searchHome.toLowerCase())
+                        .includes(searchHome.toLowerCase()) || 
+                    item.home_status
+                        .toLowerCase()
+                        .includes(searchHome.toLowerCase())   
             );
         } else {
             filterHome = [...listHome];
         }
     }
     
-    const NewData = (e,id,nmcurr,multiplier,create,update) => {
-        
-        loopdata()
+    const NewData = (e,id,resultcrd,nmpoin,resultwn) => {
+        sData = e
+        if(sData == "New"){
+          loopdata()
+        }else{
+          idrecord = id
+          resultcard = resultcrd
+          resultnmpoint = nmpoin
+          resultcardwin = resultwn
+
+          if(resultwn == ""){
+            let temp_data = id.split('-')
+            let temp_data_total = temp_data.length
+            shuffleArray = []
+            for(let i=0;i<temp_data_total;i++) {
+              shuffleArray.push(card_result_data[temp_data[i]])
+            }
+          
+            let status = hitung_statuswinlose(shuffleArray)
+            let temp_status = status[0]==false?"N":"Y"
+            let temp_poin = "";
+            let temp_listwin = "";
+            if(temp_status == "Y"){
+                temp_poin = list_point[status[2]].code
+                // console.log("total length : " + status[1].length)
+                for(let x=0;x<status[1].length;x++){
+                  if(x==status[1].length-1){
+                    temp_listwin += status[1][x].id
+                  }else{
+                    temp_listwin += status[1][x].id+","
+                  }
+                }
+                
+            }
+            resultcardwin = temp_listwin
+          }
+        }
        
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalentrycrud"));
         myModal_newentry.show();
@@ -1029,7 +1080,7 @@
             }
             
         }else{
-            if(pattern_list.length < 1){
+            if(idrecord == ""){
                 flag = false
                 msg += "The ID is required\n"
             }
@@ -1048,8 +1099,12 @@
                     Authorization: "Bearer " + token,
                 },
                 body: JSON.stringify({
-                    sdata: "New",
+                    sdata: sData,
                     page:"CURR-SAVE",
+                    pattern_search: searchHome,
+                    pattern_page: parseInt(pagingnow),
+                    pattern_id: idrecord,
+                    pattern_resultcardwin: resultcardwin,
                     data: pattern_list,
                 }),
             });
@@ -1077,12 +1132,10 @@
     }
     
     function clearField(){
-        idrecord = "";
-        name_field = "";
-        multiplier_field = 0;
-        flag_id_field = false
-        create_field = "";
-        update_field = "";
+      idrecord = "";
+      resultcard = "";
+      resultnmpoint = "";
+      resultcardwin = "";
     }
     function callFunction(event){
         switch(event.detail){
@@ -1113,6 +1166,49 @@
         }
         return result
     }
+    function card_img(e){
+      // console.log(e)
+      if(e != "" || e.length > 0){
+        let data = e.split(",");
+        let total_data = e.split(",").length;
+        let img_data = "";
+        for(let i=0;i<total_data;i++){
+          const searchIndex = card_result_data.findIndex((car) => car.id==data[i]);
+          
+          img_data +="<img width='75px' src='"+card_result_data[searchIndex].img+"' /> "
+        }
+        return img_data
+      }else{
+        return ""
+      }
+    }
+    function card_img_2(e,y){
+      if(y == "Y"){
+        if(e != ""){
+          let data = e.split(",");
+          let total_data = e.split(",").length;
+          let img_data = "";
+          for(let i=0;i<total_data;i++){
+            const searchIndex = card_result_data.findIndex((car) => car.id==data[i]);
+            // console.log(searchIndex)
+            img_data +="<img width='65px' src='"+card_result_data[searchIndex].img+"' /> "
+          }
+          return img_data
+        }else{
+          return ""
+        }
+      }else{
+        return ""
+      }
+    }
+    const handleSelectPaging = (event) => {
+      let page = event.target.value;
+      pagingnow = page;
+      const movie = {
+        page,
+      };
+      dispatch("handlePaging", movie);
+    };
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -1134,6 +1230,18 @@
                 card_search={true}
                 card_title="{title_page}"
                 card_footer={totalrecord}>
+                <slot:template slot="card-title">
+                  <div class="float-end">
+                    <select
+                      on:change={handleSelectPaging}
+                      style="text-align: center;"
+                      class="form-control">
+                      {#each listPage as rec}
+                        <option value={rec.page_value}>{rec.page_display}</option>
+                      {/each}
+                    </select>
+                  </div>
+                </slot:template>
                 <slot:template slot="card-search">
                     <div class="col-lg-12" style="padding: 5px;">
                         <input
@@ -1146,7 +1254,6 @@
                     </div>
                 </slot:template>
                 <slot:template slot="card-body">
-                    
                     <table class="table table-striped ">
                         <thead>
                             <tr>
@@ -1154,8 +1261,8 @@
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">STATUS</th>
                                 <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">POIN</th>
-                                <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">PATTERN</th>
-                                <th NOWRAP width="50%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CARD</th>
+                                <th NOWRAP width="50%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">PATTERN</th>
+                                <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">RESULTCARDWIN</th>
                             </tr>
                         </thead>
                         {#if totalrecord > 0}
@@ -1164,7 +1271,7 @@
                                 <tr>
                                     <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                         <i on:click={() => {
-                                                NewData("Edit",rec.home_id, rec.home_name, rec.home_multiplier,rec.home_create, rec.home_update);
+                                                NewData("Edit",rec.home_id, rec.home_card, rec.home_nmpoin,rec.home_resultcardwin);
                                             }} class="bi bi-pencil"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
@@ -1173,9 +1280,14 @@
                                             {status(rec.home_status)}
                                         </span>
                                     </td>
-                                    <td  style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_nmpoin}</td>
-                                    <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_id}</td>
-                                    <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_card}</td>
+                                    <td  NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_nmpoin}</td>
+                                    <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
+                                      {rec.home_id}<br />
+                                      {@html card_img(rec.home_card)}
+                                    </td>
+                                    <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
+                                      {@html card_img_2(rec.home_resultcardwin,rec.home_status)}
+                                    </td>
                                 </tr>
                             {/each}
                         </tbody>
@@ -1199,15 +1311,34 @@
 
 <Modal
 	modal_id="modalentrycrud"
-	modal_size="modal-dialog-centered"
+	modal_size="modal-dialog-centered modal-lg"
 	modal_title="{title_page+"/"+sData}"
-    modal_footer_css="padding:5px;"
+  modal_body_css="height:500px; overflow-y: scroll;"
+  modal_footer_css="padding:5px;"
 	modal_footer={true}>
 	<slot:template slot="body">
+    {#if sData == "New"}
+      <table>
         {#each pattern_list as rec}
-            {rec.idpattern} | {rec.idcard} | {rec.point} |{rec.status}<br />
+        <tr>
+            <td>
+              {rec.idpattern} | {rec.point} |{rec.status}<br />
+              {@html card_img(rec.idcard)}
+              {#if rec.status == "Y"}
+                <br />
+                {@html card_img(rec.resultwin)}<br />
+              {/if}
+            </td>
+        </tr>
         {/each}
-        
+      </table>  
+    {:else}
+      {idrecord}<br />
+      {@html card_img(resultcard)}<br /><br />
+      Card Win : {resultnmpoint} <br />
+      {@html card_img(resultcardwin)}
+              
+    {/if}
 	</slot:template>
 	<slot:template slot="footer">
         {#if flag_btnsave}
