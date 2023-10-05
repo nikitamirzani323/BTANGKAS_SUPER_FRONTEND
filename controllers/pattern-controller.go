@@ -8,8 +8,18 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
-	"github.com/nikitamirzani323/wl_super_backend_frontend/helpers"
 )
+
+type Responsepattern struct {
+	Status      int         `json:"status"`
+	Message     string      `json:"message"`
+	Record      interface{} `json:"record"`
+	Perpage     int         `json:"perpage"`
+	Totalrecord int         `json:"totalrecord"`
+	Totallose   int         `json:"totallose"`
+	Totalwin    int         `json:"totalwin"`
+	Time        string      `json:"time"`
+}
 
 func Patternhome(c *fiber.Ctx) error {
 	type payload_patternhome struct {
@@ -33,7 +43,7 @@ func Patternhome(c *fiber.Ctx) error {
 	render_page := time.Now()
 	axios := resty.New()
 	resp, err := axios.R().
-		SetResult(helpers.Responsepaging{}).
+		SetResult(Responsepattern{}).
 		SetAuthToken(token[1]).
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
@@ -55,12 +65,14 @@ func Patternhome(c *fiber.Ctx) error {
 	log.Println("  Received At:", resp.ReceivedAt())
 	log.Println("  Body       :\n", resp)
 	log.Println()
-	result := resp.Result().(*helpers.Responsepaging)
+	result := resp.Result().(*Responsepattern)
 	if result.Status == 200 {
 		return c.JSON(fiber.Map{
 			"status":      result.Status,
 			"perpage":     result.Perpage,
 			"totalrecord": result.Totalrecord,
+			"totallose":   result.Totallose,
+			"totalwin":    result.Totalwin,
 			"message":     result.Message,
 			"record":      result.Record,
 			"time":        time.Since(render_page).String(),

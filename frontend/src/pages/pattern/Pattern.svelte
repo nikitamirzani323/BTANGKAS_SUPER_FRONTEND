@@ -16,6 +16,8 @@
     let totalrecordall = 0;
     let totalpaging = 0;
     let totalrecord = 0;
+    let totallose = 0;
+    let totalwin = 0;
 
     async function initapp() {
         const res = await fetch("/api/valid", {
@@ -54,6 +56,8 @@
         if (json.status == 200) {
             record = json.record;
             perpage = json.perpage;
+            totallose = json.totallose;
+            totalwin = json.totalwin;
             totalrecordall = json.totalrecord;
             record_message = json.message;
             if (record != null) {
@@ -123,5 +127,7 @@
     {table_body_font}
     {listPage}
     {listHome}
+    {totallose}
+    {totalwin}
     {totalrecord}/>
 {/if}

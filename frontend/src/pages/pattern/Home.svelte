@@ -1,12 +1,10 @@
 <script>
-    import { Input } from "sveltestrap";
     
     import Panel from "../../components/Panel.svelte";
     import Loader from "../../components/Loader.svelte";
 	import Button from "../../components/Button.svelte";
 	import Modal from "../../components/Modal.svelte";
     import { createEventDispatcher } from "svelte";
-  import { is_empty } from "svelte/internal";
 
     
 	export let table_header_font = ""
@@ -15,6 +13,8 @@
 	export let listHome = []
   export let listPage = [];
 	export let totalrecord = 0
+	export let totallose = 0
+	export let totalwin = 0
   let dispatch = createEventDispatcher();
 	let title_page = "PATTERN"
     let sData = "";
@@ -1243,6 +1243,13 @@
                   </div>
                 </slot:template>
                 <slot:template slot="card-search">
+                    <div class="col-lg-12" style="padding: 5px;">
+                      <div class="alert alert-primary" role="alert">
+                        Total Win : {totalwin}<br />
+                        Total Lose : {totallose}
+                      </div>
+                      
+                    </div>
                     <div class="col-lg-12" style="padding: 5px;">
                         <input
                             bind:value={searchHome}
