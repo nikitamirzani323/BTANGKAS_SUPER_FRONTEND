@@ -9,6 +9,8 @@
     let akses_page = false;
     let listHome = [];
     let listPage = [];
+    let search = "";
+    let search_status = "";
     let record = "";
     let record_message = "";
     let perpage = 0;
@@ -40,7 +42,8 @@
             initHome();
         }
     }
-    async function initHome(e) {
+    async function initHome(e,y) {
+        listHome = [];
         const res = await fetch("/api/pattern", {
             method: "POST",
             headers: {
@@ -49,6 +52,7 @@
             },
             body: JSON.stringify({
                 pattern_search: e,
+                pattern_search_status:y,
                 pattern_page : parseInt(page)
             }),
         });
@@ -68,19 +72,20 @@
                     no = parseInt(page) 
                 }
                 for (var i = 0; i < record.length; i++) {
-                    no = no + 1;
+                    no = parseInt(no) + 1;
                     listHome = [
                         ...listHome,
                         {
                             home_no: no,
                             home_id: record[i]["pattern_id"],
                             home_card: record[i]["pattern_idcard"],
+                            home_codepoin: record[i]["pattern_codepoin"],
                             home_nmpoin: record[i]["pattern_nmpoin"],
                             home_resultcardwin: record[i]["pattern_resultcardwin"],
                             home_status: record[i]["pattern_status"],
                             home_status_css: record[i]["pattern_status_css"],
-                            home_create: record[i]["curr_create"],
-                            home_update: record[i]["curr_update"],
+                            home_create: record[i]["pattern_create"],
+                            home_update: record[i]["pattern_update"],
                         },
                     ];
                 }
@@ -113,7 +118,16 @@
     };
     const handlePaging = (e) => {
         page = e.detail.page
-        initHome("")
+        search_status = e.detail.status_search
+        initHome("",search_status)
+    };
+    const handleSearch = (e) => {
+        search = e.detail.searchHome;
+        initHome(search,"")
+    };
+    const handleSearchStatus = (e) => {
+        search_status = e.detail.searchstatus;
+        initHome("",search_status)
     };
     initapp()
 </script>
@@ -121,6 +135,8 @@
 {#if akses_page == true}
 <Home
     on:handlePaging={handlePaging}
+    on:handleSearch={handleSearch}
+    on:handleSearchStatus={handleSearchStatus}
     on:handleRefreshData={handleRefreshData}
     {token}
     {table_header_font}

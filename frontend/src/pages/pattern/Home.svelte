@@ -1,9 +1,9 @@
 <script>
-    
+    import { Input } from "sveltestrap";
     import Panel from "../../components/Panel.svelte";
     import Loader from "../../components/Loader.svelte";
-	import Button from "../../components/Button.svelte";
-	import Modal from "../../components/Modal.svelte";
+	  import Button from "../../components/Button.svelte";
+	  import Modal from "../../components/Modal.svelte";
     import { createEventDispatcher } from "svelte";
 
     
@@ -20,11 +20,19 @@
     let sData = "";
     let myModal_newentry = "";
     let flag_btnsave = true;
+    let flag_btnsavemanual = true;
     let idrecord = "";
     let resultcard = "";
+    let resultcodepoint = "";
     let resultnmpoint = "";
+    let resultcodepoint_after = "";
+    let resultnmpoint_after = "";
     let resultcardwin = "";
+    let resultstatus = "";
+    let create_field = "";
+    let update_field = "";
     let searchHome = "";
+    let status_search = "";
     let filterHome = [];
     let css_loader = "display: none;";
     let msgloader = "";
@@ -116,6 +124,10 @@
     let pattern_card_string = "";
     let usedIndexes = [];
     let pagingnow = 0;
+    let pattern_field = "";
+    let pattern_img = "";
+    let pattern_poin = "";
+    let pattern_win = "";
     function shuffleArray_card(array){
         let i = 0
         while(i<7){
@@ -203,20 +215,30 @@
                         .includes(searchHome.toLowerCase()) || 
                     item.home_status
                         .toLowerCase()
-                        .includes(searchHome.toLowerCase())   
+                        .includes(searchHome.toLowerCase()) || 
+                    item.home_nmpoin
+                        .toLowerCase()
+                        .includes(searchHome.toLowerCase())     
             );
         } else {
             filterHome = [...listHome];
         }
     }
     
-    const NewData = (e,id,resultcrd,nmpoin,resultwn) => {
+    const NewData = (e,id,resultcrd,code,nmpoin,resultwn,create,update) => {
         sData = e
         if(sData == "New"){
+          flag_btnsave = true
           loopdata()
         }else{
+          create_field = create;
+          update_field = update;
+          resultstatus = "";
+          resultcodepoint_after = "";
+          resultnmpoint_after = "";
           idrecord = id
           resultcard = resultcrd
+          resultcodepoint = code
           resultnmpoint = nmpoin
           resultcardwin = resultwn
 
@@ -233,7 +255,8 @@
             let temp_poin = "";
             let temp_listwin = "";
             if(temp_status == "Y"){
-                temp_poin = list_point[status[2]].code
+                resultcodepoint_after = list_point[status[2]].code
+                resultnmpoint_after = list_point[status[2]].name
                 // console.log("total length : " + status[1].length)
                 for(let x=0;x<status[1].length;x++){
                   if(x==status[1].length-1){
@@ -244,7 +267,14 @@
                 }
                 
             }
+            resultstatus = temp_status;
             resultcardwin = temp_listwin
+            // console.log(resultstatus)
+            if(resultcardwin == ""){
+              flag_btnsave = false
+            }else{
+              flag_btnsave = true
+            }
           }
         }
        
@@ -252,9 +282,76 @@
         myModal_newentry.show();
         
     };
+    const NewManualData = (e,id,resultcrd,nmpoin,resultwn) => {
+        pattern_field = "";
+        pattern_poin = "";
+        pattern_img = "";
+        pattern_win = "";
+        flag_btnsavemanual = false;
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modalentrycrudmanual"));
+        myModal_newentry.show();
+        
+    };
+    const handleCheckWinLose = () => {
+        let flag = true;
+        pattern_poin = "";
+        pattern_img = "";
+        if(pattern_field == ""){
+          alert("The pattern is required")
+          flag = false;
+        }
+        if(flag){
+          let temp_data = pattern_field.split('-')
+          let temp_data_total = temp_data.length
+          shuffleArray = []
+          for(let i=0;i<temp_data_total;i++) {
+            shuffleArray.push(card_result_data[temp_data[i]])
+            if(i == temp_data_total-1) {
+              pattern_img += card_result_data[temp_data[i]].id
+            }else{
+              pattern_img += card_result_data[temp_data[i]].id+","
+            }
+          }
+        
+         
+          let status = hitung_statuswinlose(shuffleArray)
+          let temp_status = status[0]==false?"N":"Y"
+          let temp_listwin = "";
+          if(temp_status == "Y"){
+              pattern_poin = list_point[status[2]].name
+              // console.log("total length : " + status[1].length)
+              for(let x=0;x<status[1].length;x++){
+                if(x==status[1].length-1){
+                  temp_listwin += status[1][x].id
+                }else{
+                  temp_listwin += status[1][x].id+","
+                }
+              }
+              
+          }
+          pattern_win = temp_listwin
+
+          flag_btnsavemanual = true;
+        }
+        
+    };
+    function check_pattern_status(e){
+        let temp_data = e.split('-')
+        let temp_data_total = temp_data.length
+        let shuffleArrayTest = []
+        for(let i=0;i<temp_data_total;i++) {
+          shuffleArrayTest.push(card_result_data[temp_data[i]])
+        }
+    
+      
+        let status = hitung_statuswinlose(shuffleArrayTest)
+        let temp_status = status[0]==false?"N":"Y"
+        
+        return temp_status
+    }
     function hitung_statuswinlose(data_array){
       let data_result = [];
-     
+      
       data_result = royal_flush_factory(data_array);
       if(!data_result[0]){
         data_result = five_kind_factory(data_array);
@@ -304,28 +401,29 @@
               temp.push(prop + ":" + counts[prop])
           }
       }
+      
       if(temp.length > 0){
         let temp_string = temp[0]
         let temp_result = temp_string.split(":");
         let total_temp = temp_result[1];
         let total_jk = 0;
         let total_card = 0;
-        if(parseInt(total_temp) == 5){
+        if(parseInt(total_temp) == 5 || parseInt(total_temp) == 6){
           for(let i=0;i<data_array.length;i++){
             switch(data_array[i].val){
-              case "10":
-                total_jk = total_jk + 1;break;
-              case "J":
-                total_jk = total_jk + 1;break;
-              case "K":
-                total_jk = total_jk + 1;break;
-              case "Q":
-                total_jk = total_jk + 1;break;
-              case "AS":
-                total_jk = total_jk + 1;break;
-              case "JK":
-                total_jk = total_jk + 1;break;
-            }
+                case "10":
+                  total_jk = total_jk + 1;break;
+                case "J":
+                  total_jk = total_jk + 1;break;
+                case "K":
+                  total_jk = total_jk + 1;break;
+                case "Q":
+                  total_jk = total_jk + 1;break;
+                case "AS":
+                  total_jk = total_jk + 1;break;
+                case "JK":
+                  total_jk = total_jk + 1;break;
+              }
           }
           total_card = total_jk
           if(total_card == 5){
@@ -869,6 +967,24 @@
             }
           }
           total_card = parseInt(total_temp) + total_jk
+          // console.log(total_card)
+          if(total_card == 4){
+            info_result = "3 Of A Kind"
+            info_card = pattern_stright_10
+  
+            for(let i=0;i<temp.length;i++){
+              temp_string = temp[i]
+              temp_result = temp_string.split(":");
+              for(let i=0;i<data_array.length;i++){
+                if(data_array[i].val_display == temp_result[0]){
+                  data_win.push(data_array[i])
+                }
+              }
+            }
+  
+            // credit_animation(credit,7,totalbet)
+            flag_func = true;
+          }
           if(total_card == 3){
             info_result = "3 Of A Kind"
             info_card = pattern_stright_10
@@ -947,8 +1063,44 @@
           temp_result = temp_string.split(":");    
           total = total + parseInt(temp_result[1])
       }
-    
       let flag_two = false
+      if(total_temp == 3){
+        if(total == 4 || total == 6){
+          for(let x=0;x<temp.length;x++){
+            temp_result = temp[x].split(":");
+            switch(temp_result[0]){
+              case "10":
+                flag_two = true;break;
+              case "J":
+                flag_two = true;break;
+              case "Q":
+                flag_two = true;break;
+              case "K":
+                flag_two = true;break;
+              case "AS":
+                flag_two = true;break;
+              case "JK":
+                flag_two = true;break;
+            }
+          }
+          
+          if(flag_two){//2 PAIR
+            info_result = "2 PAIR"
+            info_card = temp
+            flag_func = true
+  
+            for(let i=0;i<temp.length;i++){
+              temp_string = temp[i]
+              temp_result = temp_string.split(":");
+              for(let i=0;i<data_array.length;i++){
+                if(data_array[i].val == temp_result[0]){
+                  data_win.push(data_array[i])
+                }
+              }
+            }
+          }
+        }
+      }
       if(total_temp == 2){
         if(total == 4 || total == 6){
           for(let x=0;x<temp.length;x++){
@@ -1104,6 +1256,8 @@
                     pattern_search: searchHome,
                     pattern_page: parseInt(pagingnow),
                     pattern_id: idrecord,
+                    pattern_codepoin: resultcodepoint_after ,
+                    pattern_status: resultstatus,
                     pattern_resultcardwin: resultcardwin,
                     data: pattern_list,
                 }),
@@ -1130,7 +1284,59 @@
             alert(msg)
         }
     }
-    
+    async function handleSaveManual() {
+        let flag = true
+        let msg = ""
+     
+        if(pattern_field == ""){
+            flag = false
+            msg += "The ID is required\n"
+        }
+        
+        if(flag){
+            flag_btnsave = false;
+            css_loader = "display: inline-block;";
+            msgloader = "Sending...";
+            const res = await fetch("/api/patternsavemanual", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                    sdata: sData,
+                    page:"CURR-SAVE",
+                    pattern_search: searchHome,
+                    pattern_page: parseInt(pagingnow),
+                    pattern_id: pattern_field,
+                    pattern_idcard: pattern_img,
+                    pattern_codepoin: resultcodepoint_after ,
+                    pattern_resultcardwin: resultcardwin,
+                    pattern_status: resultstatus,
+                }),
+            });
+            const json = await res.json();
+            if (json.status == 200) {
+                flag_btnsave = true;
+                if(sData=="New"){
+                    // clearField()
+                }
+                msgloader = json.message;
+                RefreshHalaman()
+            } else if(json.status == 403){
+                flag_btnsave = true;
+                alert(json.message)
+            } else {
+                flag_btnsave = true;
+                msgloader = json.message;
+            }
+            setTimeout(function () {
+                css_loader = "display: none;";
+            }, 1000);
+        }else{
+            alert(msg)
+        }
+    }
     function clearField(){
       idrecord = "";
       resultcard = "";
@@ -1142,6 +1348,9 @@
             case "NEW":
                 NewData("New","","","");
                 break;
+            case "NEWMANUAL":
+                NewManualData("New","","","");
+                break;
             case "REFRESH":
                 RefreshHalaman();break;
             case "SAVE":
@@ -1151,12 +1360,12 @@
     const handleKeyboard_checkenter = (e) => {
         let keyCode = e.which || e.keyCode;
         if (keyCode === 13) {
-                filterTafsirMimpi = [];
+                filterHome = [];
                 listHome = [];
-                const tafsir = {
-                    searchTafsirMimpi,
+                const searchdata = {
+                  searchHome,
                 };
-                dispatch("handleTafsirMimpi", tafsir);
+                dispatch("handleSearch", searchdata);
         }  
     };
     function status(e){
@@ -1166,8 +1375,8 @@
         }
         return result
     }
-    function card_img(e){
-      // console.log(e)
+    function card_img(e,y){
+      // console.log(e)      
       if(e != "" || e.length > 0){
         let data = e.split(",");
         let total_data = e.split(",").length;
@@ -1175,7 +1384,7 @@
         for(let i=0;i<total_data;i++){
           const searchIndex = card_result_data.findIndex((car) => car.id==data[i]);
           
-          img_data +="<img width='75px' src='"+card_result_data[searchIndex].img+"' /> "
+          img_data +="<img width='"+y+"px' src='"+card_result_data[searchIndex].img+"' /> "
         }
         return img_data
       }else{
@@ -1204,10 +1413,17 @@
     const handleSelectPaging = (event) => {
       let page = event.target.value;
       pagingnow = page;
-      const movie = {
-        page,
+      const pattern = {
+        page,status_search
       };
-      dispatch("handlePaging", movie);
+      dispatch("handlePaging", pattern);
+    };
+    const handleSelectSearchStatus = (event) => {
+      let searchstatus = event.target.value;
+      const pattern = {
+        searchstatus,
+      };
+      dispatch("handleSearchStatus", pattern);
     };
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
@@ -1220,6 +1436,11 @@
                 on:click={callFunction}
                 button_function="NEW"
                 button_title="New"
+                button_css="btn-dark"/>
+            <Button
+                on:click={callFunction}
+                button_function="NEWMANUAL"
+                button_title="New Manual"
                 button_css="btn-dark"/>
             <Button
                 on:click={callFunction}
@@ -1250,7 +1471,8 @@
                       </div>
                       
                     </div>
-                    <div class="col-lg-12" style="padding: 5px;">
+                    <div class="row" style="padding: 5px;">
+                      <div class="col-lg-8" >
                         <input
                             bind:value={searchHome}
                             on:keypress={handleKeyboard_checkenter}
@@ -1258,6 +1480,17 @@
                             class="form-control"
                             placeholder="Search Pattern"
                             aria-label="Search"/>
+                    </div>
+                    <div class="col-lg-4" >
+                      <select
+                        on:change={handleSelectSearchStatus}
+                        bind:value={status_search}
+                        class="form-control">
+                        <option value="">--Select Status--</option>
+                        <option value="Y">WIN</option>
+                        <option value="N">LOSE</option>
+                      </select>
+                    </div>
                     </div>
                 </slot:template>
                 <slot:template slot="card-body">
@@ -1278,7 +1511,8 @@
                                 <tr>
                                     <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                         <i on:click={() => {
-                                                NewData("Edit",rec.home_id, rec.home_card, rec.home_nmpoin,rec.home_resultcardwin);
+                                                NewData("Edit",rec.home_id, rec.home_card, rec.home_codepoin, rec.home_nmpoin,rec.home_resultcardwin,
+                                                rec.home_create,rec.home_update);
                                             }} class="bi bi-pencil"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
@@ -1287,10 +1521,12 @@
                                             {status(rec.home_status)}
                                         </span>
                                     </td>
-                                    <td  NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_nmpoin}</td>
+                                    <td  NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
+                                      {rec.home_codepoin}-{rec.home_nmpoin}
+                                    </td>
                                     <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
-                                      {rec.home_id}<br />
-                                      {@html card_img(rec.home_card)}
+                                      {rec.home_id} | <span class="badge bg-info text-dark">{status(check_pattern_status(rec.home_id))}</span><br />
+                                      {@html card_img(rec.home_card,75)}
                                     </td>
                                     <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
                                       {@html card_img_2(rec.home_resultcardwin,rec.home_status)}
@@ -1330,10 +1566,10 @@
         <tr>
             <td>
               {rec.idpattern} | {rec.point} |{rec.status}<br />
-              {@html card_img(rec.idcard)}
+              {@html card_img(rec.idcard,75)}
               {#if rec.status == "Y"}
                 <br />
-                {@html card_img(rec.resultwin)}<br />
+                {@html card_img(rec.resultwin,75)}<br />
               {/if}
             </td>
         </tr>
@@ -1341,10 +1577,18 @@
       </table>  
     {:else}
       {idrecord}<br />
-      {@html card_img(resultcard)}<br /><br />
-      Card Win : {resultnmpoint} <br />
-      {@html card_img(resultcardwin)}
-              
+      {@html card_img(resultcard,85)}<br /><br />
+      Card Win : {resultcodepoint}-{resultnmpoint} <br />
+      {@html card_img(resultcardwin,85)}<br /><br />
+      <div class="alert alert-info" role="alert">
+        Card Win After : {resultcodepoint_after} - {resultnmpoint_after} - {resultstatus}
+      </div>
+      <div class="mb-3">
+        <div class="alert alert-secondary" style="font-size: 11px; padding:10px;" role="alert">
+            Create : {create_field}<br />
+            Update : {update_field}
+        </div>
+    </div>
     {/if}
 	</slot:template>
 	<slot:template slot="footer">
@@ -1359,5 +1603,40 @@
 	</slot:template>
 </Modal>
 
-
+<Modal
+	modal_id="modalentrycrudmanual"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="PATTERN MANUAL"
+  modal_body_css="height:500px; overflow-y: scroll;"
+  modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <div class="mb-3">
+            <label for="exampleForm" class="form-label">Pattern</label>
+            <Input bind:value={pattern_field}
+                class="required"
+                type="text"
+                placeholder="Pattern"/>
+        </div>
+        {#if pattern_img != ""}
+        {@html card_img(pattern_img,85)}<br /><br />
+        Card Win : {pattern_poin} <br />
+        {@html card_img(pattern_win,85)}<br />
+        {/if}
+	</slot:template>
+	<slot:template slot="footer">
+        <Button on:click={() => {
+              handleCheckWinLose();
+          }} 
+          button_title="Check"
+          button_css="btn-info"/>
+        {#if flag_btnsavemanual}
+        <Button on:click={() => {
+                handleSaveManual();
+            }} 
+            button_title="Save"
+            button_css="btn-warning"/>
+        {/if}
+	</slot:template>
+</Modal>
 

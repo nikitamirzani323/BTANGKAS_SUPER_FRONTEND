@@ -23,8 +23,9 @@ type Responsepattern struct {
 
 func Patternhome(c *fiber.Ctx) error {
 	type payload_patternhome struct {
-		Pattern_search string `json:"pattern_search"`
-		Pattern_page   int    `json:"pattern_page"`
+		Pattern_search        string `json:"pattern_search"`
+		Pattern_search_status string `json:"pattern_search_status"`
+		Pattern_page          int    `json:"pattern_page"`
 	}
 	hostname := c.Hostname()
 	bearToken := c.Get("Authorization")
@@ -48,9 +49,10 @@ func Patternhome(c *fiber.Ctx) error {
 		SetError(responseerror{}).
 		SetHeader("Content-Type", "application/json").
 		SetBody(map[string]interface{}{
-			"client_hostname": hostname,
-			"pattern_search":  client.Pattern_search,
-			"pattern_page":    client.Pattern_page,
+			"client_hostname":       hostname,
+			"pattern_search":        client.Pattern_search,
+			"pattern_search_status": client.Pattern_search_status,
+			"pattern_page":          client.Pattern_page,
 		}).
 		Post(PATH + "api/pattern")
 	if err != nil {
@@ -93,6 +95,8 @@ func PatternSave(c *fiber.Ctx) error {
 		Pattern_search        string          `json:"pattern_search" `
 		Pattern_page          int             `json:"pattern_page" `
 		Pattern_id            string          `json:"pattern_id" `
+		Pattern_codepoin      string          `json:"pattern_codepoin" `
+		Pattern_status        string          `json:"pattern_status" `
 		Pattern_resultcardwin string          `json:"pattern_resultcardwin" `
 		Data                  json.RawMessage `json:"data"`
 	}
@@ -125,10 +129,87 @@ func PatternSave(c *fiber.Ctx) error {
 			"pattern_search":        client.Pattern_search,
 			"pattern_page":          client.Pattern_page,
 			"pattern_id":            client.Pattern_id,
+			"pattern_codepoin":      client.Pattern_codepoin,
+			"pattern_status":        client.Pattern_status,
 			"pattern_resultcardwin": client.Pattern_resultcardwin,
 			"pattern_list":          string(client.Data),
 		}).
 		Post(PATH + "api/patternsave")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func PatternSaveManual(c *fiber.Ctx) error {
+	type payload_patternsavemanual struct {
+		Page                  string `json:"page"`
+		Sdata                 string `json:"sdata" `
+		Pattern_search        string `json:"pattern_search" `
+		Pattern_page          int    `json:"pattern_page" `
+		Pattern_id            string `json:"pattern_id" `
+		Pattern_idcard        string `json:"pattern_idcard" `
+		Pattern_codepoin      string `json:"pattern_codepoin" `
+		Pattern_resultcardwin string `json:"pattern_resultcardwin" `
+		Pattern_status        string `json:"pattern_status" `
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_patternsavemanual)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":       hostname,
+			"page":                  client.Page,
+			"sdata":                 client.Sdata,
+			"pattern_search":        client.Pattern_search,
+			"pattern_page":          client.Pattern_page,
+			"pattern_id":            client.Pattern_id,
+			"pattern_idcard":        client.Pattern_idcard,
+			"pattern_codepoin":      client.Pattern_codepoin,
+			"pattern_resultcardwin": client.Pattern_resultcardwin,
+			"pattern_status":        client.Pattern_status,
+		}).
+		Post(PATH + "api/patternsavemanual")
 	if err != nil {
 		log.Println(err.Error())
 	}
