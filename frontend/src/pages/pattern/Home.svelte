@@ -126,8 +126,11 @@
     let pagingnow = 0;
     let pattern_field = "";
     let pattern_img = "";
+    let pattern_codepoin = "";
     let pattern_poin = "";
     let pattern_win = "";
+    let pattern_status = "";
+    let pattern_status_dua = "";
     function shuffleArray_card(array){
         let i = 0
         while(i<7){
@@ -284,9 +287,12 @@
     };
     const NewManualData = (e,id,resultcrd,nmpoin,resultwn) => {
         pattern_field = "";
+        pattern_codepoin = "";
         pattern_poin = "";
         pattern_img = "";
         pattern_win = "";
+        pattern_status = "";
+        pattern_status_dua = "";
         flag_btnsavemanual = false;
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalentrycrudmanual"));
         myModal_newentry.show();
@@ -294,8 +300,8 @@
     };
     const handleCheckWinLose = () => {
         let flag = true;
-        pattern_poin = "";
         pattern_img = "";
+        pattern_win = "";
         if(pattern_field == ""){
           alert("The pattern is required")
           flag = false;
@@ -318,6 +324,7 @@
           let temp_status = status[0]==false?"N":"Y"
           let temp_listwin = "";
           if(temp_status == "Y"){
+              pattern_codepoin = list_point[status[2]].code
               pattern_poin = list_point[status[2]].name
               // console.log("total length : " + status[1].length)
               for(let x=0;x<status[1].length;x++){
@@ -329,6 +336,7 @@
               }
               
           }
+          pattern_status_dua = temp_status
           pattern_win = temp_listwin
 
           flag_btnsavemanual = true;
@@ -1292,7 +1300,7 @@
             flag = false
             msg += "The ID is required\n"
         }
-        
+       
         if(flag){
             flag_btnsave = false;
             css_loader = "display: inline-block;";
@@ -1304,15 +1312,15 @@
                     Authorization: "Bearer " + token,
                 },
                 body: JSON.stringify({
-                    sdata: sData,
+                    sdata: "New",
                     page:"CURR-SAVE",
                     pattern_search: searchHome,
                     pattern_page: parseInt(pagingnow),
                     pattern_id: pattern_field,
                     pattern_idcard: pattern_img,
-                    pattern_codepoin: resultcodepoint_after ,
-                    pattern_resultcardwin: resultcardwin,
-                    pattern_status: resultstatus,
+                    pattern_codepoin: pattern_codepoin ,
+                    pattern_resultcardwin: pattern_win,
+                    pattern_status: pattern_status_dua,
                 }),
             });
             const json = await res.json();
@@ -1620,7 +1628,7 @@
         </div>
         {#if pattern_img != ""}
         {@html card_img(pattern_img,85)}<br /><br />
-        Card Win : {pattern_poin} <br />
+        Card Win : {pattern_status_dua} | {pattern_poin} <br />
         {@html card_img(pattern_win,85)}<br />
         {/if}
 	</slot:template>
