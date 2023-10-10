@@ -8,6 +8,7 @@
     let token = localStorage.getItem("token");
     let akses_page = false;
     let listHome = [];
+    let listPoin = [];
     let listPage = [];
     let search = "";
     let search_status = "";
@@ -59,6 +60,7 @@
         const json = await res.json();
         if (json.status == 200) {
             record = json.record;
+            let record_listpoint = json.listpoint;
             perpage = json.perpage;
             totallose = json.totallose;
             totalwin = json.totalwin;
@@ -100,6 +102,17 @@
                         },
                     ];
                 }
+            }
+            for (var i = 0; i < record_listpoint.length; i++) {
+                listPoin = [
+                    ...listPoin,
+                    {
+                        patternlistpoint_id: record_listpoint[i]["patternlistpoint_id"],
+                        patternlistpoint_codepoin: record_listpoint[i]["patternlistpoint_codepoin"],
+                        patternlistpoint_nmpoin: record_listpoint[i]["patternlistpoint_nmpoin"],
+                        patternlistpoint_total: record_listpoint[i]["patternlistpoint_total"],
+                    },
+                ];
             }
         } else {
             logout();
@@ -143,6 +156,7 @@
     {table_body_font}
     {listPage}
     {listHome}
+    {listPoin}
     {totallose}
     {totalwin}
     {totalrecord}/>

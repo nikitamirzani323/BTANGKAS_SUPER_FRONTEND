@@ -11,6 +11,7 @@
 	import Company from "./pages/company/Company.svelte";
 	import Companyadmin from "./pages/companyadmin/Companyadmin.svelte";
 	import Companyadminrule from "./pages/companyadminrule/Companyadminrule.svelte";
+	import Listpattern from "./pages/listpattern/Listpattern.svelte";
 	import Listpoint from "./pages/listpoint/Listpoint.svelte";
 	import Listbet from "./pages/listbet/Listbet.svelte";
 	import Login from "./pages/Login.svelte";
@@ -36,6 +37,13 @@
 					table_body_font: table_body_font,
 				},
 				component: Dashboard,
+			}),
+			"/listpattern": wrap({
+				component: Listpattern,
+				props: {
+					table_header_font: table_header_font,
+					table_body_font: table_body_font,
+				},
 			}),
 			"/pattern": wrap({
 				component: Pattern,

@@ -12,6 +12,7 @@
 	export let token = ""
 	export let listHome = []
   export let listPage = [];
+  export let listPoin = [];
 	export let totalrecord = 0
 	export let totallose = 0
 	export let totalwin = 0
@@ -114,6 +115,16 @@
     const pattern_stright_8 = [9,10,11,12,13]
     const pattern_stright_9 = [10,11,12,13,14]
     const pattern_stright_10 = [14,2,3,4,5]
+    let point_royalflush =  0
+    let point_5ofkind = 0
+    let point_straightflush = 0
+    let point_4ofkind = 0
+    let point_fullhouse = 0
+    let point_flush = 0
+    let point_straight = 0
+    let point_3ofkind = 0
+    let point_2pair = 0
+    let point_acepair = 0
     let info_result = "";
     let info_card = [];
     let shuffleArray_id = [];
@@ -226,6 +237,40 @@
         } else {
             filterHome = [...listHome];
         }
+        for(let p=0;p<listPoin.length;p++){
+          switch(listPoin[p].patternlistpoint_codepoin){
+            case "RF":
+              point_royalflush = listPoin[p].patternlistpoint_total;
+              break;
+            case "5K":
+              point_5ofkind = listPoin[p].patternlistpoint_total;
+              break;
+            case "SF":
+              point_straightflush = listPoin[p].patternlistpoint_total;
+              break;  
+            case "4K":
+              point_4ofkind = listPoin[p].patternlistpoint_total;
+              break;
+            case "FH":
+              point_fullhouse = listPoin[p].patternlistpoint_total;
+              break;
+            case "FL":
+              point_flush = listPoin[p].patternlistpoint_total;
+              break;
+            case "ST":
+              point_straight = listPoin[p].patternlistpoint_total;
+              break;
+            case "3K":
+              point_3ofkind = listPoin[p].patternlistpoint_total;
+              break;  
+            case "2P":
+              point_2pair = listPoin[p].patternlistpoint_total;
+              break;
+            case "AP":
+              point_acepair = listPoin[p].patternlistpoint_total;
+              break;
+          }
+        }
     }
     
     const NewData = (e,id,resultcrd,code,nmpoin,resultwn,create,update) => {
@@ -285,7 +330,7 @@
         myModal_newentry.show();
         
     };
-    const NewManualData = (e,id,resultcrd,nmpoin,resultwn) => {
+    const NewManualData = () => {
         pattern_field = "";
         pattern_codepoin = "";
         pattern_poin = "";
@@ -1433,6 +1478,8 @@
       };
       dispatch("handleSearchStatus", pattern);
     };
+    
+   
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -1474,10 +1521,75 @@
                 <slot:template slot="card-search">
                     <div class="col-lg-12" style="padding: 5px;">
                       <div class="alert alert-primary" role="alert">
-                        Total Win : {totalwin}<br />
-                        Total Lose : {totallose}
+                        <table class="table">
+                          <tr>
+                            <td>
+                              <table style="width: 100%;">
+                                <tr>
+                                  <td>Total Win</td>
+                                  <td style="text-align: right;">{totalwin}</td>
+                                </tr>
+                                <tr>
+                                  <td>Total Lose</td>
+                                  <td style="text-align: right;">{totallose}</td>
+                                </tr>
+                                <tr>
+                                  <td>Total Pattern</td>
+                                  <td style="text-align: right;">{parseInt(totalwin)+parseInt(totallose)}</td>
+                                </tr>
+                                <tr>
+                                  <td>Royal Flush</td>
+                                  <td style="text-align: right;">{point_royalflush}</td>
+                                </tr>
+                                <tr>
+                                  <td>5 Of A Kind</td>
+                                  <td style="text-align: right;">{point_5ofkind}</td>
+                                </tr>
+                                <tr>
+                                  <td>Straight Flush</td>
+                                  <td style="text-align: right;">{point_straightflush}</td>
+                                </tr>
+                                <tr>
+                                  <td>4 Of A Kind</td>
+                                  <td style="text-align: right;">{point_4ofkind}</td>
+                                </tr>
+                                <tr>
+                                  <td>Full House</td>
+                                  <td style="text-align: right;">{point_fullhouse}</td>
+                                </tr>
+                              </table>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>
+                              <table style="width: 100%;">
+                                <tr><td colspan="2">&nbsp;</td></tr>
+                                <tr><td colspan="2">&nbsp;</td></tr>
+                                <tr><td colspan="2">&nbsp;</td></tr>
+                                <tr>
+                                  <td style="border-bottom: none;">Flush</td>
+                                  <td style="text-align: right;">{point_flush}</td>
+                                </tr>
+                                <tr>
+                                  <td>Straight</td>
+                                  <td style="text-align: right;">{point_straight}</td>
+                                </tr>
+                                <tr>
+                                  <td>3 Of A Kind</td>
+                                  <td style="text-align: right;">{point_3ofkind}</td>
+                                </tr>
+                                <tr>
+                                  <td>2 Pair (10 Pair)</td>
+                                  <td style="text-align: right;">{point_2pair}</td>
+                                </tr>
+                                <tr>
+                                  <td>Ace Pair</td>
+                                  <td style="text-align: right;">{point_acepair}</td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </table>
                       </div>
-                      
                     </div>
                     <div class="row" style="padding: 5px;">
                       <div class="col-lg-8" >

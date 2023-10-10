@@ -8,12 +8,14 @@ import (
 
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/nikitamirzani323/wl_super_backend_frontend/entities"
 )
 
 type Responsepattern struct {
 	Status      int         `json:"status"`
 	Message     string      `json:"message"`
 	Record      interface{} `json:"record"`
+	Listpoint   interface{} `json:"listpoint"`
 	Perpage     int         `json:"perpage"`
 	Totalrecord int         `json:"totalrecord"`
 	Totallose   int         `json:"totallose"`
@@ -77,6 +79,7 @@ func Patternhome(c *fiber.Ctx) error {
 			"totalwin":    result.Totalwin,
 			"message":     result.Message,
 			"record":      result.Record,
+			"listpoint":   result.Listpoint,
 			"time":        time.Since(render_page).String(),
 		})
 	} else {
@@ -210,6 +213,258 @@ func PatternSaveManual(c *fiber.Ctx) error {
 			"pattern_status":        client.Pattern_status,
 		}).
 		Post(PATH + "api/patternsavemanual")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func Listpatternhome(c *fiber.Ctx) error {
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(entities.Home)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname": hostname,
+			"page":            client.Page,
+		}).
+		Post(PATH + "api/listpattern")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func ListpatternSave(c *fiber.Ctx) error {
+	type payload_istpatternSave struct {
+		Page                      string `json:"page"`
+		Sdata                     string `json:"sdata" `
+		Listpattern_search        string `json:"listpattern_search" `
+		Listpattern_search_status string `json:"listpattern_search_status" `
+		Listpattern_page          int    `json:"listpattern_page" `
+		Listpattern_id            string `json:"listpattern_id" `
+		Listpattern_nmlistpattern string `json:"listpattern_nmlistpattern" `
+		Listpattern_status        string `json:"listpattern_status" `
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_istpatternSave)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":           hostname,
+			"page":                      client.Page,
+			"sdata":                     client.Sdata,
+			"listpattern_search":        client.Listpattern_search,
+			"listpattern_search_status": client.Listpattern_search_status,
+			"listpattern_page":          client.Listpattern_page,
+			"listpattern_id":            client.Listpattern_id,
+			"listpattern_nmlistpattern": client.Listpattern_nmlistpattern,
+			"listpattern_status":        client.Listpattern_status,
+		}).
+		Post(PATH + "api/listpatternsave")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func Listpatterndetailhome(c *fiber.Ctx) error {
+	type payload_patterndetail struct {
+		Listpatterndetail_idlistpattern string `json:"listpatterndetail_idlistpattern" `
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_patterndetail)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"listpatterndetail_idlistpattern": client.Listpatterndetail_idlistpattern,
+		}).
+		Post(PATH + "api/listpatterndetail")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsedefault)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
+func ListpatterndetailSave(c *fiber.Ctx) error {
+	type payload_listpatterndetailSave struct {
+		Page                            string `json:"page"`
+		Sdata                           string `json:"sdata" `
+		Listpatterndetail_idlistpattern string `json:"listpatterndetail_idlistpattern" `
+		Listpatterndetail_idpattern     string `json:"listpatterndetail_idpattern" `
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_listpatterndetailSave)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsedefault{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":                 hostname,
+			"page":                            client.Page,
+			"sdata":                           client.Sdata,
+			"listpatterndetail_idlistpattern": client.Listpatterndetail_idlistpattern,
+			"listpatterndetail_idpattern":     client.Listpatterndetail_idpattern,
+		}).
+		Post(PATH + "api/listpatterndetailsave")
 	if err != nil {
 		log.Println(err.Error())
 	}
