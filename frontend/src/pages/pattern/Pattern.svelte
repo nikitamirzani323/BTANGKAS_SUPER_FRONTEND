@@ -92,7 +92,7 @@
                     ];
                 }
                 listPage = [];
-                for(var i=1;i<totalpaging;i++){
+                for(var i=1;i<=totalpaging;i++){
                     listPage = [
                         ...listPage,
                         {

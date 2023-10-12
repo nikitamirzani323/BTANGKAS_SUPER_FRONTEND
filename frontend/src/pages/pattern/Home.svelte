@@ -18,6 +18,14 @@
 	export let totalwin = 0
   let dispatch = createEventDispatcher();
 	let title_page = "PATTERN"
+  let listPatternByCode = []
+  let listPagePatternByCode = []
+  let selectPagingPatternByCode = "0"
+  let poin_code = ""
+  let poin_name = ""
+  let pagePatternByCode = 0
+  let perpagePatternByCode = 0
+  let totalrecordallPatternByCode = 0
     let sData = "";
     let myModal_newentry = "";
     let flag_btnsave = true;
@@ -323,6 +331,25 @@
             }else{
               flag_btnsave = true
             }
+          }else{
+            console.log("apa ya")
+            let status = hitung_statuswinlose(shuffleArray)
+            let temp_status = status[0]==false?"N":"Y"
+            let temp_listwin = "";
+            if(temp_status == "Y"){
+                pattern_codepoin = list_point[status[2]].code
+                pattern_poin = list_point[status[2]].name
+                // console.log("total length : " + status[1].length)
+                for(let x=0;x<status[1].length;x++){
+                  if(x==status[1].length-1){
+                    temp_listwin += status[1][x].id
+                  }else{
+                    temp_listwin += status[1][x].id+","
+                  }
+                }
+                
+            }
+            console.log(status)
           }
         }
        
@@ -405,6 +432,7 @@
     function hitung_statuswinlose(data_array){
       let data_result = [];
       
+      // data_result = five_kind_factory(data_array);
       data_result = royal_flush_factory(data_array);
       if(!data_result[0]){
         data_result = five_kind_factory(data_array);
@@ -461,41 +489,43 @@
         let total_temp = temp_result[1];
         let total_jk = 0;
         let total_card = 0;
-        if(parseInt(total_temp) == 5 || parseInt(total_temp) == 6){
-          for(let i=0;i<data_array.length;i++){
-            switch(data_array[i].val){
-                case "10":
-                  total_jk = total_jk + 1;break;
-                case "J":
-                  total_jk = total_jk + 1;break;
-                case "K":
-                  total_jk = total_jk + 1;break;
-                case "Q":
-                  total_jk = total_jk + 1;break;
-                case "AS":
-                  total_jk = total_jk + 1;break;
-                case "JK":
-                  total_jk = total_jk + 1;break;
-              }
-          }
-          total_card = total_jk
-          if(total_card == 5){
-            info_result = "Royal Flush"
-            info_card = pattern_stright_10
-            flag_func = true;
-          
-            for(let i=0;i<temp.length;i++){
-              temp_string = temp[i]
-              temp_result = temp_string.split(":");
-              for(let i=0;i<data_array.length;i++){
-                if(data_array[i].code_card == temp_result[0]){
-                  data_win.push(data_array[i])
+        if(temp_result[0] == "S"){
+          if(parseInt(total_temp) == 5 || parseInt(total_temp) == 6){
+            for(let i=0;i<data_array.length;i++){
+              switch(data_array[i].val){
+                  case "10":
+                    total_jk = total_jk + 1;break;
+                  case "J":
+                    total_jk = total_jk + 1;break;
+                  case "K":
+                    total_jk = total_jk + 1;break;
+                  case "Q":
+                    total_jk = total_jk + 1;break;
+                  case "AS":
+                    total_jk = total_jk + 1;break;
+                  case "JK":
+                    total_jk = total_jk + 1;break;
+                }
+            }
+            total_card = total_jk
+            if(total_card == 5){
+              info_result = "Royal Flush"
+              info_card = pattern_stright_10
+              flag_func = true;
+            
+              for(let i=0;i<temp.length;i++){
+                temp_string = temp[i]
+                temp_result = temp_string.split(":");
+                for(let i=0;i<data_array.length;i++){
+                  if(data_array[i].code_card == temp_result[0]){
+                    data_win.push(data_array[i])
+                  }
                 }
               }
+    
+              // credit_animation(credit,0,totalbet)
+              
             }
-  
-            // credit_animation(credit,0,totalbet)
-            
           }
         }
       }
@@ -543,12 +573,11 @@
               temp_string = temp[i]
               temp_result = temp_string.split(":");
               for(let i=0;i<data_array.length;i++){
-                if(data_array[i].val == temp_result[0] || data_array[i].val == "JK"){
+                if(data_array[i].val_display == temp_result[0] || data_array[i].val == "JK"){
                   data_win.push(data_array[i])
                 }
               }
             }
-            // credit_animation(credit,1,totalbet)
           }
         }
         if(parseInt(total_temp) == 3){
@@ -562,19 +591,17 @@
             info_result = "5 Of A Kind"
             info_card = pattern_stright_10
             flag_func = true;
-  
+            
+           
             for(let i=0;i<temp.length;i++){
               temp_string = temp[i]
               temp_result = temp_string.split(":");
               for(let i=0;i<data_array.length;i++){
-                if(data_array[i].val == temp_result[0] || data_array[i].val == "JK"){
+                if(data_array[i].val_display == temp_result[0] || data_array[i].val == "JK"){
                   data_win.push(data_array[i])
                 }
               }
             }
-  
-            // credit_animation(credit,1,totalbet)
-            
           }
         }
       }
@@ -840,12 +867,14 @@
       let total_temp = temp.length
       let temp_string = ""
       let temp_result;
+      
       for(let i=0;i<total_temp;i++){
           temp_string = temp[i]
           temp_result = temp_string.split(":");
           
           total = total + parseInt(temp_result[1])
       }
+     
       if(total_temp == 1){
         if(total == 5){ //FLUSH
           info_result = "FLUSH"
@@ -1020,7 +1049,7 @@
             }
           }
           total_card = parseInt(total_temp) + total_jk
-          // console.log(total_card)
+        
           if(total_card == 4){
             info_result = "3 Of A Kind"
             info_card = pattern_stright_10
@@ -1471,6 +1500,12 @@
       };
       dispatch("handlePaging", pattern);
     };
+    const handleSelectPagingByPoint = (event) => {
+      let page = event.target.value;
+      selectPagingPatternByCode = page
+      pagePatternByCode = page
+      handleCallpatternlist(poin_code)
+    };
     const handleSelectSearchStatus = (event) => {
       let searchstatus = event.target.value;
       const pattern = {
@@ -1478,8 +1513,77 @@
       };
       dispatch("handleSearchStatus", pattern);
     };
-    
-   
+    const call_pattern_list = (e) => {
+      pagePatternByCode = 0
+      selectPagingPatternByCode = "0"
+      listPagePatternByCode = [];
+      poin_code = e
+      const searchIndex = list_point.findIndex((card) => card.code==e);
+      poin_name = list_point[searchIndex].name
+      handleCallpatternlist(e)
+      myModal_newentry = new bootstrap.Modal(document.getElementById("modalpatternbycode"));
+      myModal_newentry.show();
+    };
+    async function handleCallpatternlist(e) {
+        listPatternByCode = [];
+        
+        const res = await fetch("/api/patterncode", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                pattern_code: e,
+                pattern_page : parseInt(pagePatternByCode)
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            perpagePatternByCode = json.perpage;
+            totalrecordallPatternByCode = json.totalrecord;
+            if (record != null) {
+                let totalpaging = Math.ceil(parseInt(totalrecordallPatternByCode) / parseInt(perpagePatternByCode))
+                let no = 0
+                if(pagePatternByCode > 1){
+                    no = parseInt(pagePatternByCode) 
+                }
+                for (var i = 0; i < record.length; i++) {
+                    no = parseInt(no) + 1;
+                    listPatternByCode = [
+                        ...listPatternByCode,
+                        {
+                            home_no: no,
+                            home_id: record[i]["pattern_id"],
+                            home_card: record[i]["pattern_idcard"],
+                            home_codepoin: record[i]["pattern_codepoin"],
+                            home_nmpoin: record[i]["pattern_nmpoin"],
+                            home_resultcardwin: record[i]["pattern_resultcardwin"],
+                            home_status: record[i]["pattern_status"],
+                            home_status_css: record[i]["pattern_status_css"],
+                            home_create: record[i]["pattern_create"],
+                            home_update: record[i]["pattern_update"],
+                        },
+                    ];
+                }
+                listPagePatternByCode = [];
+                for(var i=1;i<=totalpaging;i++){
+                  listPagePatternByCode = [
+                        ...listPagePatternByCode,
+                        {
+                            page_id: i,
+                            page_value: ((i*perpagePatternByCode)-perpagePatternByCode),
+                            page_display: i + " Of " + perpagePatternByCode*i,
+                        },
+                    ];
+                }
+            }
+            
+        } else {
+            logout();
+        }
+    }
 </script>
 <div id="loader" style="margin-left:50%;{css_loader}">
     {msgloader}
@@ -1538,23 +1642,33 @@
                                   <td style="text-align: right;">{parseInt(totalwin)+parseInt(totallose)}</td>
                                 </tr>
                                 <tr>
-                                  <td>Royal Flush</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                      call_pattern_list("RF");
+                                  }}>Royal Flush</td>
                                   <td style="text-align: right;">{point_royalflush}</td>
                                 </tr>
                                 <tr>
-                                  <td>5 Of A Kind</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("5K");
+                                  }}>5 Of A Kind</td>
                                   <td style="text-align: right;">{point_5ofkind}</td>
                                 </tr>
                                 <tr>
-                                  <td>Straight Flush</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("SF");
+                                  }}>Straight Flush</td>
                                   <td style="text-align: right;">{point_straightflush}</td>
                                 </tr>
                                 <tr>
-                                  <td>4 Of A Kind</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("4K");
+                                    }}>4 Of A Kind</td>
                                   <td style="text-align: right;">{point_4ofkind}</td>
                                 </tr>
                                 <tr>
-                                  <td>Full House</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("FH");
+                                    }}>Full House</td>
                                   <td style="text-align: right;">{point_fullhouse}</td>
                                 </tr>
                               </table>
@@ -1566,23 +1680,33 @@
                                 <tr><td colspan="2">&nbsp;</td></tr>
                                 <tr><td colspan="2">&nbsp;</td></tr>
                                 <tr>
-                                  <td style="border-bottom: none;">Flush</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("FL");
+                                   }}>Flush</td>
                                   <td style="text-align: right;">{point_flush}</td>
                                 </tr>
                                 <tr>
-                                  <td>Straight</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("ST");
+                                    }}>Straight</td>
                                   <td style="text-align: right;">{point_straight}</td>
                                 </tr>
                                 <tr>
-                                  <td>3 Of A Kind</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("3K");
+                                    }}>3 Of A Kind</td>
                                   <td style="text-align: right;">{point_3ofkind}</td>
                                 </tr>
                                 <tr>
-                                  <td>2 Pair (10 Pair)</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("2P");
+                                    }}>2 Pair (10 Pair)</td>
                                   <td style="text-align: right;">{point_2pair}</td>
                                 </tr>
                                 <tr>
-                                  <td>Ace Pair</td>
+                                  <td style="cursor: pointer;text-decoration: underline;" on:click={() => {
+                                    call_pattern_list("AP");
+                                  }}>Ace Pair</td>
                                   <td style="text-align: right;">{point_acepair}</td>
                                 </tr>
                               </table>
@@ -1760,3 +1884,60 @@
 	</slot:template>
 </Modal>
 
+<Modal
+	modal_id="modalpatternbycode"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="PATTERN BY {poin_name}"
+  modal_body_css="height:500px; overflow-y: scroll;"
+  modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+    <div class="float-end">
+      <select
+        on:change={handleSelectPagingByPoint}
+        on:value={selectPagingPatternByCode}
+        style="text-align: center;"
+        class="form-control">
+        {#each listPagePatternByCode as rec}
+          <option value={rec.page_value}>{rec.page_display}</option>
+        {/each}
+      </select>
+    </div>
+    <table class="table table-striped ">
+      <thead>
+          <tr>
+              <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+              <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">STATUS</th>
+              <th NOWRAP width="10%" style="text-align: center;vertical-align: top;font-weight:bold;font-size: {table_header_font};">POIN</th>
+              <th NOWRAP width="50%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">PATTERN</th>
+          </tr>
+      </thead>
+      <tbody>
+        {#each listPatternByCode as rec }
+            <tr>
+                
+                <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.home_no}</td>
+                <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
+                    <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.home_status_css}">
+                        {status(rec.home_status)}
+                    </span>
+                </td>
+                <td  NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
+                  {rec.home_codepoin}-{rec.home_nmpoin}
+                </td>
+                <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
+                  {rec.home_id} | <span class="badge bg-info text-dark">{status(check_pattern_status(rec.home_id))}</span><br />
+                  {@html card_img(rec.home_card,75)}
+                  <br />
+                  <b>RESULTCARDWIN</b><br />
+                  {@html card_img_2(rec.home_resultcardwin,rec.home_status)}
+                </td>
+            </tr>
+        {/each}
+      </tbody>
+    </table>
+	</slot:template>
+	<slot:template slot="footer">
+    Record : {totalrecordallPatternByCode}
+	</slot:template>
+</Modal>
