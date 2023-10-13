@@ -50,15 +50,30 @@
             if (record != null) {
                 totalrecord = record.length;
                 let no = 0
-                let domain_css = "";
+                let home_totallose_css = "";
+                let home_totalwin_css = "";
                 for (var i = 0; i < record.length; i++) {
                     no = no + 1;
+                    if(record[i]["listpattern_totallose"] > 0){
+                        home_totallose_css = "color:blue;";
+                    }else{
+                        home_totallose_css = "color:red;";
+                    }
+                    if(record[i]["listpattern_totalwin"] > 0){
+                        home_totalwin_css = "color:blue;";
+                    }else{
+                        home_totalwin_css = "color:red;";
+                    }
                     listHome = [
                         ...listHome,
                         {
                             home_no: no,
                             home_id: record[i]["listpattern_id"],
                             home_name: record[i]["listpattern_nmlistpattern"],
+                            home_totallose: record[i]["listpattern_totallose"],
+                            home_totallose_css: home_totallose_css,
+                            home_totalwin: record[i]["listpattern_totalwin"],
+                            home_totalwin_css: home_totalwin_css,
                             home_status: record[i]["listpattern_status"],
                             home_status_css: record[i]["listpattern_status_css"],
                             home_create: record[i]["listpattern_create"],
