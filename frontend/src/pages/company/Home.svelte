@@ -37,6 +37,19 @@
     let searchHome = "";
     let filterHome = [];
 
+    //COMPANY INVOICE
+    let invoice_company = [];
+    let invoice_id = "";
+    let invoice_username = "";
+    let invoice_roundbet = 0;
+    let invoice_totalbet = 0;
+    let invoice_totalwin = 0;
+    let invoice_totalbonus = 0;
+    let invoice_card_codepoin = "";
+    let invoice_card_pattern = "";
+    let invoice_card_result = "";
+    let invoice_card_win = "";
+
     //COMPANY LISTBET
     let listbet_master = [];
     let listbet_company = [];
@@ -129,6 +142,28 @@
         point_confpoint_field = 0;
         call_listconfpoint_bycompany(e)
         myModal_newentry = new bootstrap.Modal(document.getElementById("modallistconfpoint"));
+        myModal_newentry.show();
+        
+    };
+    const call_invoice = (e) => {
+        title_idcompany = e
+        call_invoice_bycompany(e)
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modalinvoice"));
+        myModal_newentry.show();
+        
+    };
+    const call_invoicedetail = (code,username,roundbet,totalbet,totalwin,totalbonus,card_codepoin,card_pattern,card_result,card_win) => {
+        invoice_id = code;
+        invoice_username = username;
+        invoice_roundbet = roundbet;
+        invoice_totalbet = totalbet;
+        invoice_totalwin = totalwin
+        invoice_totalbonus = totalbonus
+        invoice_card_codepoin = card_codepoin;
+        invoice_card_pattern = card_pattern;
+        invoice_card_result = card_result;
+        invoice_card_win = card_win;
+        myModal_newentry = new bootstrap.Modal(document.getElementById("modalinvoicedetail"));
         myModal_newentry.show();
         
     };
@@ -246,6 +281,62 @@
             }, 1000);
         }else{
             alert(msg)
+        }
+    }
+    async function call_invoice_bycompany(idcompany) {
+        invoice_company = [];
+        const res = await fetch("/api/companyinvoice", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+                company_id: idcompany.toLowerCase(),
+            }),
+        });
+        const json = await res.json();
+        if (json.status == 200) {
+            let record = json.record;
+            if (record != null) {
+                let no = 0;
+                let winlose = 0;
+                let winlose_css = "";
+                for (var i = 0; i < record.length; i++) {
+                    no = no + 1;
+                    winlose = (parseInt(record[i]["companyinvoice_totalbet"]) * parseInt(record[i]["companyinvoice_roundbet"])) - (parseInt(record[i]["companyinvoice_totalwin"])+parseInt(record[i]["companyinvoice_totalbonus"]))
+                    
+                    
+                    if(winlose > 0){
+                        winlose_css = "color:blue;font-weight:bold;"
+                    }else{
+                        winlose_css = "color:red;font-weight:bold;"
+                    }
+                   
+                    invoice_company = [
+                        ...invoice_company,
+                        {
+                        companyinvoice_no: no,
+                        companyinvoice_id: record[i]["companyinvoice_id"],
+                        companyinvoice_username: record[i]["companyinvoice_username"],
+                        companyinvoice_roundbet: record[i]["companyinvoice_roundbet"],
+                        companyinvoice_totalbet: record[i]["companyinvoice_totalbet"],
+                        companyinvoice_totalwin: record[i]["companyinvoice_totalwin"],
+                        companyinvoice_totalbonus: record[i]["companyinvoice_totalbonus"],
+                        companyinvoice_winlose: winlose,
+                        companyinvoice_winlose_css: winlose_css,
+                        companyinvoice_card_codepoin: record[i]["companyinvoice_card_codepoin"],
+                        companyinvoice_card_pattern: record[i]["companyinvoice_card_pattern"],
+                        companyinvoice_card_result: record[i]["companyinvoice_card_result"],
+                        companyinvoice_card_win: record[i]["companyinvoice_card_win"],
+                        companyinvoice_status: record[i]["companyinvoice_status"],
+                        companyinvoice_status_css: record[i]["companyinvoice_status_css"],
+                        companyinvoice_create: record[i]["companyinvoice_create"],
+                        companyinvoice_update: record[i]["companyinvoice_update"],
+                        },
+                    ];
+                }
+            }
         }
     }
     async function call_listconfpoint_bycompany(idbet) {
@@ -534,7 +625,114 @@
             alert(msg)
         }
     }
-    
+    const card_result_data = [
+      {id:"2_diamond",val:"2",val_display:2,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_2.png"},
+      {id:"3_diamond",val:"3",val_display:3,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_3.png"},
+      {id:"4_diamond",val:"4",val_display:4,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_4.png"},
+      {id:"5_diamond",val:"5",val_display:5,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_5.png"},
+      {id:"6_diamond",val:"6",val_display:6,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_6.png"},
+      {id:"7_diamond",val:"7",val_display:7,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_7.png"},
+      {id:"8_diamond",val:"8",val_display:8,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_8.png"},
+      {id:"9_diamond",val:"9",val_display:9,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_9.png"},
+      {id:"10_diamond",val:"10",val_display:10,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_10.png"},
+      {id:"j_diamond",val:"J",val_display:11,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_J.png"},
+      {id:"q_diamond",val:"Q",val_display:12,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_Q.png"},
+      {id:"k_diamond",val:"K",val_display:13,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_K.png"},
+      {id:"as_diamond",val:"AS",val_display:14,code_card:"D",img:"./CARD/WHITE/CARD_RED_DIAMOND_AS.png"},
+      {id:"2_heart",val:"2",val_display:2,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_2.png"},
+      {id:"3_heart",val:"3",val_display:3,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_3.png"},
+      {id:"4_heart",val:"4",val_display:4,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_4.png"},
+      {id:"5_heart",val:"5",val_display:5,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_5.png"},
+      {id:"6_heart",val:"6",val_display:6,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_6.png"},
+      {id:"7_heart",val:"7",val_display:7,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_7.png"},
+      {id:"8_heart",val:"8",val_display:8,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_8.png"},
+      {id:"9_heart",val:"9",val_display:9,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_9.png"},
+      {id:"10_heart",val:"10",val_display:10,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_10.png"},
+      {id:"j_heart",val:"J",val_display:11,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_J.png"},
+      {id:"q_heart",val:"Q",val_display:12,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_Q.png"},
+      {id:"k_heart",val:"K",val_display:13,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_K.png"},
+      {id:"as_heart",val:"AS",val_display:14,code_card:"H",img:"./CARD/WHITE/CARD_RED_LOVE_AS.png"},
+      {id:"2_club",val:"2",val_display:2,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_2.png"},
+      {id:"3_club",val:"3",val_display:3,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_3.png"},
+      {id:"4_club",val:"4",val_display:4,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_4.png"},
+      {id:"5_club",val:"5",val_display:5,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_5.png"},
+      {id:"6_club",val:"6",val_display:6,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_6.png"},
+      {id:"7_club",val:"7",val_display:7,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_7.png"},
+      {id:"8_club",val:"8",val_display:8,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_8.png"},
+      {id:"9_club",val:"9",val_display:9,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_9.png"},
+      {id:"10_club",val:"10",val_display:10,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_10.png"},
+      {id:"j_club",val:"J",val_display:11,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_J.png"},
+      {id:"q_club",val:"Q",val_display:12,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_Q.png"},
+      {id:"k_club",val:"K",val_display:13,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_K.png"},
+      {id:"as_club",val:"AS",val_display:14,code_card:"C",img:"./CARD/WHITE/CARD_BLACK_KRITING_AS.png"},
+      {id:"2_spade",val:"2",val_display:2,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_2.png"},
+      {id:"3_spade",val:"3",val_display:3,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_3.png"},
+      {id:"4_spade",val:"4",val_display:4,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_4.png"},
+      {id:"5_spade",val:"5",val_display:5,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_5.png"},
+      {id:"6_spade",val:"6",val_display:6,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_6.png"},
+      {id:"7_spade",val:"7",val_display:7,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_7.png"},
+      {id:"8_spade",val:"8",val_display:8,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_8.png"},
+      {id:"9_spade",val:"9",val_display:9,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_9.png"},
+      {id:"10_spade",val:"10",val_display:10,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_10.png"},
+      {id:"j_spade",val:"J",val_display:11,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_J.png"},
+      {id:"q_spade",val:"Q",val_display:12,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_Q.png"},
+      {id:"k_spade",val:"K",val_display:13,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_K.png"},
+      {id:"as_spade",val:"AS",val_display:14,code_card:"S",img:"./CARD/WHITE/CARD_BLACK_DAUN_AS.png"},
+      {id:"jk_black",val:"JK",val_display:1,code_card:"JK",img:"./CARD/WHITE/CARD_JOKER_BLACK.png"},
+      {id:"jk_red",val:"JK",val_display:1,code_card:"JK",img:"./CARD/WHITE/CARD_JOKER_RED.png"},
+    ]
+    const list_point = [
+      {id:"1",code:"RF",name:"Royal Flush",poin:500},
+      {id:"2",code:"5K",name:"5 Of A Kind",poin:200},
+      {id:"3",code:"SF",name:"Straight Flush",poin:120},
+      {id:"4",code:"4K",name:"4 Of A Kind",poin:50},
+      {id:"5",code:"FH",name:"Full House",poin:7},
+      {id:"6",code:"FL",name:"Flush",poin:5},
+      {id:"7",code:"ST",name:"Straight",poin:3},
+      {id:"8",code:"3K",name:"3 Of A Kind",poin:2},
+      {id:"9",code:"2P",name:"2 Pair (10 PAIR)",poin:1},
+      {id:"10",code:"AP",name:"Ace Pair",poin:1},
+    ]
+    function card_img(e,y){ 
+      if(e != "" || e.length > 0){
+        let data = e.split("-");
+        let total_data = e.split("-").length;
+        let img_data = "";
+        for(let i=0;i<total_data;i++){
+        //   const searchIndex = card_result_data.findIndex((car) => car.id==data[i]);
+          
+          img_data +="<img width='"+y+"px' src='"+card_result_data[data[i]].img+"' /> "
+        }
+        return img_data
+      }else{
+        return ""
+      }
+    }
+    function card_img2(e,y){ 
+       
+      if(e != "" || e.length > 0){
+        let data = e.split(",");
+        let total_data = e.split(",").length;
+        let img_data = "";
+        for(let i=0;i<total_data;i++){
+          const searchIndex = card_result_data.findIndex((car) => car.id==data[i]);
+          
+          img_data +="<img width='"+y+"px' src='"+card_result_data[searchIndex].img+"' /> "
+        }
+        return img_data
+      }else{
+        return ""
+      }
+    }
+    function card_codepoin(e){
+        if(e != ""){
+            const searchIndex = list_point.findIndex((car) => car.code==e);
+            return list_point[searchIndex]["name"]
+        }else{
+            return ""
+        } 
+        
+    }
     function clearField(){
         flag_code = false
         idrecord = "";
@@ -649,7 +847,7 @@
                     <table class="table table-striped ">
                         <thead>
                             <tr>
-                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" colspan=3>&nbsp;</th>
+                                <th NOWRAP width="1%" style="text-align: center;vertical-align: top;" colspan=4>&nbsp;</th>
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">&nbsp;</th>
                                 <th NOWRAP width="2%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CODE</th>
@@ -675,6 +873,11 @@
                                                 rec.home_phoneowner,rec.home_status,
                                                 rec.home_create, rec.home_update);
                                             }} class="bi bi-pencil"></i>
+                                    </td>
+                                    <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
+                                        <i on:click={() => {
+                                                call_invoice(rec.home_id)
+                                            }} class="bi bi-file-earmark"></i>
                                     </td>
                                     <td NOWRAP style="text-align: center;vertical-align: top;cursor:pointer;">
                                         <i on:click={() => {
@@ -1041,5 +1244,115 @@
         </table>
 	</slot:template>
 	<slot:template slot="footer">
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modalinvoice"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="Invoice - {title_idcompany}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={true}>
+	<slot:template slot="body">
+        <table class="table table-striped ">
+            <thead>
+                <tr>
+                    <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">NO</th>
+                    <th NOWRAP width="1%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">&nbsp;</th>
+                    <th NOWRAP width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">INVOICE</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">USERNAME</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">DATE</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">ROUND</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">BET</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">TOTALBET</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">TOTALWIN</th>
+                    <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">TOTALBONUS</th>
+                    <th NOWRAP width="50%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">WINLOSE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {#each invoice_company as rec }
+                    <tr>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_no}</td>
+                        <td NOWRAP style="text-align: center;vertical-align: top;font-size: {table_body_font};">
+                            <span style="padding: 5px;border-radius: 10px;padding-right:10px;padding-left:10px;{rec.companyinvoice_status_css}">{rec.companyinvoice_status}</span>
+                        </td>
+                        <td on:click={() => {
+                            //code,username,totalbet,totalwin,totalbonus,card_codepoin,card_pattern,card_result,card_win
+                            call_invoicedetail(rec.companyinvoice_id,rec.companyinvoice_username,rec.companyinvoice_roundbet,
+                            rec.companyinvoice_totalbet,rec.companyinvoice_totalwin,rec.companyinvoice_totalbonus,
+                            rec.companyinvoice_card_codepoin,rec.companyinvoice_card_pattern,rec.companyinvoice_card_result,rec.companyinvoice_card_win);
+                        }} NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};top;cursor:pointer;text-decoration:underline;">{rec.companyinvoice_id}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_username}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_create}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{rec.companyinvoice_roundbet}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_totalbet)}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_roundbet*rec.companyinvoice_totalbet)}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:red;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_totalwin)}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:red;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_totalbonus)}</td>
+                        <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};{rec.companyinvoice_winlose_css}">{new Intl.NumberFormat().format(rec.companyinvoice_winlose)}</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+	</slot:template>
+	<slot:template slot="footer">
+        
+	</slot:template>
+</Modal>
+
+<Modal
+	modal_id="modalinvoicedetail"
+	modal_size="modal-dialog-centered modal-lg"
+	modal_title="Invoice - {title_idcompany}"
+    modal_body_css="height:500px; overflow-y: scroll;"
+    modal_footer_css="padding:5px;"
+	modal_footer={false}>
+	<slot:template slot="body">
+        <table style="width: 100%;">
+            <tr>
+                <td width="50%" style="font-size: 12px;">INVOICE</td>
+                <td width="1%" style="font-size: 12px;">:</td>
+                <td width="*" style="font-size: 12px;">{invoice_id}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">USERNAME</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: left;">{invoice_username}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">TOTAL BET</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: right;color:blue;font-weight: bold;">{invoice_roundbet}*{new Intl.NumberFormat().format(invoice_totalbet)} = {new Intl.NumberFormat().format(invoice_roundbet*invoice_totalbet)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">TOTAL WIN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: right;red:blue;font-weight: bold;">{new Intl.NumberFormat().format(invoice_totalwin)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">TOTAL BONUS</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: right;color:red;font-weight: bold;">{new Intl.NumberFormat().format(invoice_totalbonus)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">CARD PATTERN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: left;">{invoice_card_pattern}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">CARD POIN</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: left;">{card_codepoin(invoice_card_codepoin)}</td>
+            </tr>
+        </table>
+        CARD RESULT<br />
+        {@html card_img(invoice_card_result,72)}<br /><br />
+        CARD WIN<br />
+        {@html card_img2(invoice_card_win,72)}<br /><br />
+	</slot:template>
+	<slot:template slot="footer">
+        
 	</slot:template>
 </Modal>

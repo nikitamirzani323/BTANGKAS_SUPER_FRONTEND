@@ -260,6 +260,69 @@ func CompanyadminByCompany(c *fiber.Ctx) error {
 		})
 	}
 }
+func Companyinvoice(c *fiber.Ctx) error {
+	type payload_companyinvoice struct {
+		Company_id        string `json:"company_id"`
+		Company_startdate string `json:"company_startdate"`
+		Company_enddate   string `json:"company_enddate"`
+	}
+	hostname := c.Hostname()
+	bearToken := c.Get("Authorization")
+	token := strings.Split(bearToken, " ")
+	client := new(payload_companyinvoice)
+	if err := c.BodyParser(client); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
+	log.Println("Hostname: ", hostname)
+	render_page := time.Now()
+	axios := resty.New()
+	resp, err := axios.R().
+		SetResult(responsecompany{}).
+		SetAuthToken(token[1]).
+		SetError(responseerror{}).
+		SetHeader("Content-Type", "application/json").
+		SetBody(map[string]interface{}{
+			"client_hostname":   hostname,
+			"company_id":        client.Company_id,
+			"company_startdate": client.Company_startdate,
+			"company_enddate":   client.Company_enddate,
+		}).
+		Post(PATH + "api/companyinvoice")
+	if err != nil {
+		log.Println(err.Error())
+	}
+	log.Println("Response Info:")
+	log.Println("  Error      :", err)
+	log.Println("  Status Code:", resp.StatusCode())
+	log.Println("  Status     :", resp.Status())
+	log.Println("  Proto      :", resp.Proto())
+	log.Println("  Time       :", resp.Time())
+	log.Println("  Received At:", resp.ReceivedAt())
+	log.Println("  Body       :\n", resp)
+	log.Println()
+	result := resp.Result().(*responsecompany)
+	if result.Status == 200 {
+		return c.JSON(fiber.Map{
+			"status":  result.Status,
+			"message": result.Message,
+			"record":  result.Record,
+			"time":    time.Since(render_page).String(),
+		})
+	} else {
+		result_error := resp.Error().(*responseerror)
+		return c.JSON(fiber.Map{
+			"status":  result_error.Status,
+			"message": result_error.Message,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+}
 func Companylistbet(c *fiber.Ctx) error {
 	type payload_companylistbet struct {
 		Company_id string `json:"company_id"`
