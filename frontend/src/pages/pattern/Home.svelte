@@ -372,6 +372,7 @@
     };
     const handleCheckWinLose = () => {
         let flag = true;
+        pattern_poin = "";
         pattern_img = "";
         pattern_win = "";
         if(pattern_field == ""){
@@ -432,7 +433,7 @@
     function hitung_statuswinlose(data_array){
       let data_result = [];
       
-      // data_result = five_kind_factory(data_array);
+      // data_result = royal_flush_factory(data_array);
       data_result = royal_flush_factory(data_array);
       if(!data_result[0]){
         data_result = five_kind_factory(data_array);
@@ -478,11 +479,12 @@
       }
       let temp = [];
       for(let prop in counts){
-        if (counts[prop] >= 4){
+        if (counts[prop] >= 3){
+            if(prop == "S"){
               temp.push(prop + ":" + counts[prop])
-          }
+            }
+        }
       }
-      
       if(temp.length > 0){
         let temp_string = temp[0]
         let temp_result = temp_string.split(":");
@@ -492,42 +494,88 @@
         if(temp_result[0] == "S"){
           if(parseInt(total_temp) == 5 || parseInt(total_temp) == 6){
             for(let i=0;i<data_array.length;i++){
-              switch(data_array[i].val){
-                  case "10":
-                    total_jk = total_jk + 1;break;
-                  case "J":
-                    total_jk = total_jk + 1;break;
-                  case "K":
-                    total_jk = total_jk + 1;break;
-                  case "Q":
-                    total_jk = total_jk + 1;break;
-                  case "AS":
-                    total_jk = total_jk + 1;break;
-                  case "JK":
-                    total_jk = total_jk + 1;break;
-                }
-            }
-            total_card = total_jk
-            if(total_card == 5){
-              info_result = "Royal Flush"
-              info_card = pattern_stright_10
-              flag_func = true;
-            
-              for(let i=0;i<temp.length;i++){
-                temp_string = temp[i]
-                temp_result = temp_string.split(":");
-                for(let i=0;i<data_array.length;i++){
-                  if(data_array[i].code_card == temp_result[0]){
-                    data_win.push(data_array[i])
-                  }
+              if(data_array[i].code_card == "S" || data_array[i].code_card == "JK"){
+                switch(data_array[i].val){
+                    case "10":
+                      total_jk = total_jk + 1;break;
+                    case "J":
+                      total_jk = total_jk + 1;break;
+                    case "K":
+                      total_jk = total_jk + 1;break;
+                    case "Q":
+                      total_jk = total_jk + 1;break;
+                    case "AS":
+                      total_jk = total_jk + 1;break;
+                    case "JK":
+                      total_jk = total_jk + 1;break;
                 }
               }
-    
-              // credit_animation(credit,0,totalbet)
-              
             }
+            total_card = total_jk
+          }
+          if(parseInt(total_temp) == 4){
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].code_card == "S" || data_array[i].code_card == "JK"){
+                switch(data_array[i].val){
+                    case "10":
+                      total_jk = total_jk + 1;break;
+                    case "J":
+                      total_jk = total_jk + 1;break;
+                    case "K":
+                      total_jk = total_jk + 1;break;
+                    case "Q":
+                      total_jk = total_jk + 1;break;
+                    case "AS":
+                      total_jk = total_jk + 1;break;
+                    case "JK":
+                      total_jk = total_jk + 1;break;
+                }
+              }
+            }
+            total_card = total_jk
+          }
+          if(parseInt(total_temp) == 3){
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].code_card == "S" || data_array[i].code_card == "JK"){
+                switch(data_array[i].val){
+                    case "10":
+                      total_jk = total_jk + 1;break;
+                    case "J":
+                      total_jk = total_jk + 1;break;
+                    case "K":
+                      total_jk = total_jk + 1;break;
+                    case "Q":
+                      total_jk = total_jk + 1;break;
+                    case "AS":
+                      total_jk = total_jk + 1;break;
+                    case "JK":
+                      total_jk = total_jk + 1;break;
+                }
+              }
+            }
+            total_card = total_jk
           }
         }
+       
+   
+        if(total_card == 5){
+            info_result = "Royal Flush"
+            info_card = pattern_stright_10
+            flag_func = true;
+          
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].code_card == "S" || data_array[i].code_card == "JK"){
+                  data_win.push(data_array[i])
+              }
+            }
+          }
+        
+
+          
+          
+
+        
+        
       }
       if(flag_func == false){
         data_win = [];
