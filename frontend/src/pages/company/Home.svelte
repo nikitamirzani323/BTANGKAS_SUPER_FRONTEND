@@ -306,19 +306,20 @@
                     no = no + 1;
                     winlose = (parseInt(record[i]["companyinvoice_totalbet"]) * parseInt(record[i]["companyinvoice_roundbet"])) - (parseInt(record[i]["companyinvoice_totalwin"])+parseInt(record[i]["companyinvoice_totalbonus"]))
                     
-                    
                     if(winlose > 0){
                         winlose_css = "color:blue;font-weight:bold;"
                     }else{
                         winlose_css = "color:red;font-weight:bold;"
                     }
-                   
+                    let temp_string = record[i]["companyinvoice_create"]
+                    let temp_result = temp_string.split(",");
                     invoice_company = [
                         ...invoice_company,
                         {
                         companyinvoice_no: no,
                         companyinvoice_id: record[i]["companyinvoice_id"],
                         companyinvoice_username: record[i]["companyinvoice_username"],
+                        companyinvoice_date: temp_result[1],
                         companyinvoice_roundbet: record[i]["companyinvoice_roundbet"],
                         companyinvoice_totalbet: record[i]["companyinvoice_totalbet"],
                         companyinvoice_totalwin: record[i]["companyinvoice_totalwin"],
@@ -1263,6 +1264,7 @@
                     <th NOWRAP width="5%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">INVOICE</th>
                     <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">USERNAME</th>
                     <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">DATE</th>
+                    <th NOWRAP width="10%" style="text-align: left;vertical-align: top;font-weight:bold;font-size:{table_header_font};">PATTERN</th>
                     <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">ROUND</th>
                     <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">BET</th>
                     <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size:{table_header_font};">TOTALBET</th>
@@ -1283,9 +1285,15 @@
                             call_invoicedetail(rec.companyinvoice_id,rec.companyinvoice_username,rec.companyinvoice_roundbet,
                             rec.companyinvoice_totalbet,rec.companyinvoice_totalwin,rec.companyinvoice_totalbonus,
                             rec.companyinvoice_card_codepoin,rec.companyinvoice_card_pattern,rec.companyinvoice_card_result,rec.companyinvoice_card_win);
-                        }} NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};top;cursor:pointer;text-decoration:underline;">{rec.companyinvoice_id}</td>
+                        }} NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};top;cursor:pointer;text-decoration:underline;">
+                            {rec.companyinvoice_id}
+                        </td>
                         <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_username}</td>
-                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_create}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.companyinvoice_date}</td>
+                        <td NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">
+                            {rec.companyinvoice_card_pattern}<br />
+                            {rec.companyinvoice_card_result}  {card_codepoin(rec.companyinvoice_card_codepoin)}
+                        </td>
                         <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{rec.companyinvoice_roundbet}</td>
                         <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_totalbet)}</td>
                         <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};color:blue;font-weight:bold;">{new Intl.NumberFormat().format(rec.companyinvoice_roundbet*rec.companyinvoice_totalbet)}</td>
@@ -1329,12 +1337,19 @@
             <tr>
                 <td style="font-size: 12px;text-align: left;">TOTAL WIN</td>
                 <td style="font-size: 12px;text-align: left;">:</td>
-                <td style="font-size: 12px;text-align: right;red:blue;font-weight: bold;">{new Intl.NumberFormat().format(invoice_totalwin)}</td>
+                <td style="font-size: 12px;text-align: right;color:red;font-weight: bold;">{new Intl.NumberFormat().format(invoice_totalwin)}</td>
             </tr>
             <tr>
                 <td style="font-size: 12px;text-align: left;">TOTAL BONUS</td>
                 <td style="font-size: 12px;text-align: left;">:</td>
                 <td style="font-size: 12px;text-align: right;color:red;font-weight: bold;">{new Intl.NumberFormat().format(invoice_totalbonus)}</td>
+            </tr>
+            <tr>
+                <td style="font-size: 12px;text-align: left;">TOTAL WINLOSE</td>
+                <td style="font-size: 12px;text-align: left;">:</td>
+                <td style="font-size: 12px;text-align: right;color:red;font-weight: bold;">
+                    {new Intl.NumberFormat().format((invoice_roundbet*invoice_totalbet)-(invoice_totalbonus+invoice_totalwin))}
+                </td>
             </tr>
             <tr>
                 <td style="font-size: 12px;text-align: left;">CARD PATTERN</td>

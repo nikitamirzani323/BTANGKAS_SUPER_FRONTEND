@@ -460,7 +460,7 @@
     function hitung_statuswinlose(data_array){
       let data_result = [];
       
-      // data_result = straight_flush_factory(data_array);
+      // data_result = royal_flush_factory(data_array);
       // console.log(data_result[0]);
       data_result = royal_flush_factory(data_array);
       if(!data_result[0]){
@@ -513,6 +513,7 @@
             }
         }
       }
+      // console.log(temp)
       if(temp.length > 0){
         let temp_string = temp[0]
         let temp_result = temp_string.split(":");
@@ -1136,7 +1137,6 @@
               temp.push(prop + ":" + counts[prop])
           }
       }
-      
       if(temp.length > 0){
         let temp_string = temp[0]
         let temp_result = temp_string.split(":");
