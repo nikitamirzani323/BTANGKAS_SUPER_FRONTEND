@@ -64,6 +64,9 @@
                         .includes(searchHome.toLowerCase()) || 
                     item.home_name
                         .toLowerCase()
+                        .includes(searchHome.toLowerCase()) || 
+                    item.home_nmpoin
+                        .toLowerCase()
                         .includes(searchHome.toLowerCase())
             );
         } else {
@@ -534,6 +537,7 @@
                                 <th NOWRAP width="1%" style="text-align: center;vertical-align: top;font-weight:bold;font-size:{table_header_font};">&nbsp;</th>
                                 <th NOWRAP width="1%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">CODE</th>
                                 <th NOWRAP width="*" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">NAME</th>
+                                <th NOWRAP width="35%" style="text-align: left;vertical-align: top;font-weight:bold;font-size: {table_header_font};">POIN</th>
                                 <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size: {table_header_font};">TOTAL_LOSE</th>
                                 <th NOWRAP width="10%" style="text-align: right;vertical-align: top;font-weight:bold;font-size: {table_header_font};">TOTAL_WIN</th>
                             </tr>
@@ -561,6 +565,7 @@
                                     </td>
                                     <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_id}</td>
                                     <td  style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_name}</td>
+                                    <td  NOWRAP style="text-align: left;vertical-align: top;font-size: {table_body_font};">{rec.home_nmpoin}</td>
                                     <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};{rec.home_totallose_css}">{rec.home_totallose}</td>
                                     <td  style="text-align: right;vertical-align: top;font-size: {table_body_font};{rec.home_totalwin_css}">{rec.home_totalwin}</td>
                                 </tr>

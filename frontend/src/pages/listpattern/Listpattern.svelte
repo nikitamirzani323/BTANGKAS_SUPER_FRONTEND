@@ -70,6 +70,7 @@
                             home_no: no,
                             home_id: record[i]["listpattern_id"],
                             home_name: record[i]["listpattern_nmlistpattern"],
+                            home_nmpoin: record[i]["listpattern_nmpoin"],
                             home_totallose: record[i]["listpattern_totallose"],
                             home_totallose_css: home_totallose_css,
                             home_totalwin: record[i]["listpattern_totalwin"],
