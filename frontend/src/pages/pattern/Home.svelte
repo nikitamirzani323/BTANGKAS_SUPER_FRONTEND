@@ -172,6 +172,7 @@
     let pagingnow = 0;
     let pattern_field = "";
     let pattern_img = "";
+    let pattern_img_clone = "";
     let pattern_codepoin = "";
     let pattern_poin = "";
     let pattern_win = "";
@@ -389,6 +390,7 @@
         pattern_codepoin = "";
         pattern_poin = "";
         pattern_img = "";
+        pattern_img_clone = "";
         pattern_win = "";
         pattern_status = "";
         pattern_status_dua = "";
@@ -414,12 +416,27 @@
             shuffleArray.push(card_result_data[temp_data[i]])
             if(i == temp_data_total-1) {
               pattern_img += card_result_data[temp_data[i]].id
+              // pattern_img_clone += card_result_data[temp_data[i]].val_display
             }else{
               pattern_img += card_result_data[temp_data[i]].id+","
+              // pattern_img_clone += card_result_data[temp_data[i]].val_display+"-"
             }
           }
-        
          
+          
+          function compareByval_display(a, b) {
+            return a.val_display - b.val_display;
+          }
+          let pattern_array_sort = shuffleArray.sort(compareByval_display);
+          for(let i=0;i<pattern_array_sort.length;i++) {
+         
+            if(i == pattern_array_sort.length-1) {
+              pattern_img_clone += pattern_array_sort[i].id
+            }else{
+              pattern_img_clone += pattern_array_sort[i].id+","
+            }
+          }
+
           let status = hitung_statuswinlose(shuffleArray)
           let temp_status = status[0]==false?"N":"Y"
           let temp_listwin = "";
@@ -2241,6 +2258,9 @@
         </div>
         {#if pattern_img != ""}
         {@html card_img(pattern_img,85)}<br /><br />
+
+        SORT : ASC<br />
+        {@html card_img(pattern_img_clone,85)}<br /><br />
         Card Win : {pattern_status_dua} | {pattern_poin} <br />
         {@html card_img(pattern_win,85)}<br />
         {/if}
