@@ -460,7 +460,7 @@
     function hitung_statuswinlose(data_array){
       let data_result = [];
       
-      // data_result = fourofkind_factory(data_array);
+      // data_result = straight_factory(data_array);
       // console.log(data_result[0]);
       data_result = royal_flush_factory(data_array);
       if(!data_result[0]){
@@ -881,10 +881,8 @@
       }
       // console.log(total)
       if(total == 3){//FOUR OF KIND
-        info_result = "FOUR OF KIND"
-        info_card = temp
-        flag_func = true
         
+        let flag_jk = false;
         for(let i=0;i<temp.length;i++){
           temp_string = temp[i]
           temp_result = temp_string.split(":");
@@ -897,8 +895,14 @@
         for(let j=0;j<data_array.length;j++){
             if(data_array[j].val == "JK"){
               data_win.push(data_array[j])
+              flag_jk = true
               break;
             }
+        }
+        if(flag_jk){
+          info_result = "FOUR OF KIND"
+          info_card = temp
+          flag_func = true
         }
         // credit_animation(credit,3,totalbet)
       }
@@ -973,6 +977,7 @@
               temp.push(prop + ":" + counts[prop])
           }
       }
+      // console.log(temp)
       let total = 0;
       let total_all = 0;
       let total_jk = 0;
@@ -1044,10 +1049,8 @@
               }
           }
         }else{
-          info_result = "FULL HOUSE"
-          info_card = temp
-          flag_func = true
           
+          let flag_jk = false;
           for(let i=0;i<temp.length-1;i++){
               temp_string = temp[i]
               temp_result = temp_string.split(":");
@@ -1057,12 +1060,19 @@
                 }
               }
           }
+          // console.log(data_win.length)
           if(data_win.length < 5){
             for(let i=0;i<data_array.length;i++){
               if(data_array[i].val == "JK"){
                 data_win.push(data_array[i])
+                flag_jk = true;
               }
             }
+          }
+          if(flag_jk){
+            info_result = "FULL HOUSE"
+            info_card = temp
+            flag_func = true
           }
         }
       }
@@ -1145,10 +1155,27 @@
       flag[7] = checkArray(pattern_stright_8,objdata_master)
       flag[8] = checkArray(pattern_stright_9,objdata_master)
       flag[9] = checkArray(pattern_stright_10,objdata_master)
+
+      flag[10] = checkArray(pattern_4_1,objdata_master)
+      flag[11] = checkArray(pattern_4_2,objdata_master)
+      flag[12] = checkArray(pattern_4_3,objdata_master)
+      flag[13] = checkArray(pattern_4_4,objdata_master)
+      flag[14] = checkArray(pattern_4_5,objdata_master)
+      flag[15] = checkArray(pattern_4_6,objdata_master)
+      flag[16] = checkArray(pattern_4_7,objdata_master)
+      flag[17] = checkArray(pattern_4_8,objdata_master)
+      flag[18] = checkArray(pattern_4_9,objdata_master)
+      flag[19] = checkArray(pattern_4_10,objdata_master)
+      flag[20] = checkArray(pattern_4_11,objdata_master)
+      // console.log(objdata_master)
+      // console.log(flag)
       for(let i=0;i<flag.length;i++){
         if(flag[i] == true){
           info_result = "STRAIGHT"
           info_card = pattern_stright_10
+          
+          
+
           switch(i){
             case 0:
               for(let t=0;t<pattern_stright_1.length;t++){
@@ -1230,10 +1257,108 @@
                 }
               }
               break;
+            case 10:
+              for(let t=0;t<pattern_4_1.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_1[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 11:
+              for(let t=0;t<pattern_4_2.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_2[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 12:
+              for(let t=0;t<pattern_4_3.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_3[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 13:
+              for(let t=0;t<pattern_4_4.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_4[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 14:
+              for(let t=0;t<pattern_4_5.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_5[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 15:
+              for(let t=0;t<pattern_4_6.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_6[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 16:
+              for(let t=0;t<pattern_4_7.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_7[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 17:
+              for(let t=0;t<pattern_4_8.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_8[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 18:
+              for(let t=0;t<pattern_4_9.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_9[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 19:
+              for(let t=0;t<pattern_4_10.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_10[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 20:
+              for(let t=0;t<pattern_4_11.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_11[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+          }
+          
+          let total_card = 0;
+          for(let i=0;i<data_array.length;i++){
+            if(data_array[i].code_card == "JK"){
+              data_win.push(data_array[i])
+            }
           }
         
-          // credit_animation(credit,6,totalbet)
-          flag_func = true;
+          total_card = parseInt(data_win.length)
+          if(total_card == 5){
+            flag_func = true;
+          }
+          
           break;
         }
       }
