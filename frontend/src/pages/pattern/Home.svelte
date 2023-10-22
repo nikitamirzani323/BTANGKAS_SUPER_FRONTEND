@@ -974,7 +974,9 @@
       let temp = [];
       for(let prop in counts){
         if (counts[prop] >= 2){
+            if(prop != "JK"){
               temp.push(prop + ":" + counts[prop])
+            }
           }
       }
       // console.log(temp)
@@ -991,6 +993,17 @@
       }
      
       if(total == 4){
+        for(let i=0;i<temp.length;i++){
+            temp_string = temp[i]
+            temp_result = temp_string.split(":");
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].val == temp_result[0]){
+                data_win.push(data_array[i])
+              }
+            }
+        }
+        total = data_win.length
+    
         for(let i=0;i<data_array.length;i++){
           if(data_array[i].val == "JK"){
             total_jk = total_jk + 1
@@ -999,21 +1012,16 @@
         }
         
         total_all = total_all + total + total_jk
+        if(total_all == 6){
+          let popped = data_win.pop();
+          total_all = data_win.length
+        }
+
         if(total_all == 5){
           info_result = "FULL HOUSE"
           info_card = temp
           flag_func = true
-          for(let i=0;i<temp.length;i++){
-              temp_string = temp[i]
-              temp_result = temp_string.split(":");
-              for(let i=0;i<data_array.length;i++){
-                if(data_array[i].val == temp_result[0]){
-                  data_win.push(data_array[i])
-                }
-              }
-          }
-        }
-        // console.log(total_all)
+        } 
       }
       if(total == 5){//FULL HOUSE
         if(temp.length == 2){
@@ -1173,9 +1181,7 @@
         if(flag[i] == true){
           info_result = "STRAIGHT"
           info_card = pattern_stright_10
-          
-          
-
+        
           switch(i){
             case 0:
               for(let t=0;t<pattern_stright_1.length;t++){
@@ -1346,11 +1352,13 @@
               }
               break;
           }
-          
           let total_card = 0;
-          for(let i=0;i<data_array.length;i++){
-            if(data_array[i].code_card == "JK"){
-              data_win.push(data_array[i])
+          total_card = parseInt(data_win.length)
+          if(total_card < 5){
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].code_card == "JK"){
+                data_win.push(data_array[i])
+              }
             }
           }
         
@@ -1599,7 +1607,6 @@
         let temp_string = temp[0]
         let temp_result = temp_string.split(":");
         let total_temp = temp_result[1];
-        
         for(let i=0;i<data_array.length;i++){
             if(data_array[i].val_display == temp_result[0]){
               data_win.push(data_array[i])
@@ -1609,6 +1616,9 @@
             if(data_win[i].val == "AS"){
               total_as = total_as + 1;
             }
+            if(data_win[i].val == "JK"){
+              total_jk = total_jk + 1;
+            }
         }
         
         if(total_as == 2){ // 2 AS
@@ -1617,7 +1627,25 @@
             // credit_animation(credit,9,totalbet)
             flag_func = true;
         }
-        
+        if(total_jk == 2){ // 2 JK
+            let popped = data_win.pop();
+            total_jk = data_win.length
+            total_as = 0
+            total_card = 0
+            console.log(total_jk)
+            for(let i=0;i<data_array.length;i++){
+              if(data_array[i].val == "AS"){
+                total_as = total_as + 1
+                data_win.push(data_array[i])
+              }
+            }
+            total_card = total_as + total_jk
+            if(total_card == 2){ // 1AS + 1JK
+              info_result = "ACE PAIR"
+              info_card = temp
+              flag_func = true;
+            }
+        }
       }else{
         for(let i=0;i<data_array.length;i++){
             if(data_array[i].val == "AS"){
