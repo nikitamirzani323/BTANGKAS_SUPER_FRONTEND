@@ -135,6 +135,36 @@
     const pattern_4_9 = [10,11,12,13]
     const pattern_4_10 = [11,12,13,14]
     const pattern_4_11 = [14,2,3,4]
+    const pattern_4_12 = [2,4,5,6]
+    const pattern_4_13 = [2,3,5,6]
+    const pattern_4_14 = [2,3,4,6]
+    const pattern_4_15 = [3,5,6,7]
+    const pattern_4_16 = [3,4,6,7]
+    const pattern_4_17 = [3,4,5,7]
+    const pattern_4_18 = [4,6,7,8]
+    const pattern_4_19 = [4,5,7,8]
+    const pattern_4_20 = [4,5,6,8]
+    const pattern_4_21 = [5,7,8,9]
+    const pattern_4_22 = [5,6,8,9]
+    const pattern_4_23 = [5,6,7,9]
+    const pattern_4_24 = [6,8,9,10]
+    const pattern_4_25 = [6,7,9,10]
+    const pattern_4_26 = [6,7,8,10]
+    const pattern_4_27 = [7,9,10,11]
+    const pattern_4_28 = [7,8,10,11]
+    const pattern_4_29 = [7,8,9,11]
+    const pattern_4_30 = [8,10,11,12]
+    const pattern_4_31 = [8,9,11,12]
+    const pattern_4_32 = [8,9,10,12]
+    const pattern_4_33 = [9,11,12,13]
+    const pattern_4_34 = [9,10,12,13]
+    const pattern_4_35 = [9,10,11,13]
+    const pattern_4_36 = [10,12,13,14]
+    const pattern_4_37 = [10,11,13,14]
+    const pattern_4_38 = [10,11,12,14]
+    const pattern_4_39 = [14,3,4,5]
+    const pattern_4_40 = [14,2,4,5]
+    const pattern_4_41 = [14,2,3,5]
 
     const pattern_3_1 = [2,3,4]
     const pattern_3_2 = [3,4,5]
@@ -782,6 +812,36 @@
             flag[8] = checkArray(pattern_4_9,objdata_final)
             flag[9] = checkArray(pattern_4_10,objdata_final)
             flag[10] = checkArray(pattern_4_11,objdata_final)
+            flag[11] = checkArray(pattern_4_12,objdata_final)
+            flag[12] = checkArray(pattern_4_13,objdata_final)
+            flag[13] = checkArray(pattern_4_14,objdata_final)
+            flag[14] = checkArray(pattern_4_15,objdata_final)
+            flag[15] = checkArray(pattern_4_16,objdata_final)
+            flag[16] = checkArray(pattern_4_17,objdata_final)
+            flag[17] = checkArray(pattern_4_18,objdata_final)
+            flag[18] = checkArray(pattern_4_19,objdata_final)
+            flag[19] = checkArray(pattern_4_20,objdata_final)
+            flag[20] = checkArray(pattern_4_21,objdata_final)
+            flag[21] = checkArray(pattern_4_22,objdata_final)
+            flag[22] = checkArray(pattern_4_23,objdata_final)
+            flag[23] = checkArray(pattern_4_24,objdata_final)
+            flag[24] = checkArray(pattern_4_25,objdata_final)
+            flag[25] = checkArray(pattern_4_26,objdata_final)
+            flag[26] = checkArray(pattern_4_27,objdata_final)
+            flag[27] = checkArray(pattern_4_28,objdata_final)
+            flag[28] = checkArray(pattern_4_29,objdata_final)
+            flag[29] = checkArray(pattern_4_30,objdata_final)
+            flag[30] = checkArray(pattern_4_31,objdata_final)
+            flag[31] = checkArray(pattern_4_32,objdata_final)
+            flag[32] = checkArray(pattern_4_33,objdata_final)
+            flag[33] = checkArray(pattern_4_34,objdata_final)
+            flag[34] = checkArray(pattern_4_35,objdata_final)
+            flag[35] = checkArray(pattern_4_36,objdata_final)
+            flag[36] = checkArray(pattern_4_37,objdata_final)
+            flag[37] = checkArray(pattern_4_38,objdata_final)
+            flag[38] = checkArray(pattern_4_39,objdata_final)
+            flag[39] = checkArray(pattern_4_40,objdata_final)
+            flag[40] = checkArray(pattern_4_41,objdata_final)
             
             for(let i=0;i<flag.length;i++){
               if(flag[i] == true){
@@ -1192,6 +1252,38 @@
       flag[18] = checkArray(pattern_4_9,objdata_master)
       flag[19] = checkArray(pattern_4_10,objdata_master)
       flag[20] = checkArray(pattern_4_11,objdata_master)
+
+      flag[21] = checkArray(pattern_4_12,objdata_master)
+      flag[22] = checkArray(pattern_4_13,objdata_master)
+      flag[23] = checkArray(pattern_4_14,objdata_master)
+      flag[24] = checkArray(pattern_4_15,objdata_master)
+      flag[25] = checkArray(pattern_4_16,objdata_master)
+      flag[26] = checkArray(pattern_4_17,objdata_master)
+      flag[27] = checkArray(pattern_4_18,objdata_master)
+      flag[28] = checkArray(pattern_4_19,objdata_master)
+      flag[29] = checkArray(pattern_4_20,objdata_master)
+      flag[30] = checkArray(pattern_4_21,objdata_master)
+      flag[31] = checkArray(pattern_4_22,objdata_master)
+      flag[32] = checkArray(pattern_4_23,objdata_master)
+      flag[33] = checkArray(pattern_4_24,objdata_master)
+      flag[34] = checkArray(pattern_4_25,objdata_master)
+      flag[35] = checkArray(pattern_4_26,objdata_master)
+      flag[36] = checkArray(pattern_4_27,objdata_master)
+      flag[37] = checkArray(pattern_4_28,objdata_master)
+      flag[38] = checkArray(pattern_4_29,objdata_master)
+      flag[39] = checkArray(pattern_4_30,objdata_master)
+      flag[40] = checkArray(pattern_4_31,objdata_master)
+      flag[41] = checkArray(pattern_4_32,objdata_master)
+      flag[42] = checkArray(pattern_4_33,objdata_master)
+      flag[43] = checkArray(pattern_4_34,objdata_master)
+      flag[44] = checkArray(pattern_4_35,objdata_master)
+      flag[45] = checkArray(pattern_4_36,objdata_master)
+      flag[46] = checkArray(pattern_4_37,objdata_master)
+      flag[47] = checkArray(pattern_4_38,objdata_master)
+      flag[48] = checkArray(pattern_4_39,objdata_master)
+      flag[49] = checkArray(pattern_4_40,objdata_master)
+      flag[50] = checkArray(pattern_4_41,objdata_master)
+
       // console.log(objdata_master)
       // console.log(flag)
       for(let i=0;i<flag.length;i++){
@@ -1363,6 +1455,246 @@
             case 20:
               for(let t=0;t<pattern_4_11.length;t++){
                 let temp_data = data_array.find(card => card.val_display == pattern_4_11[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 21:
+              for(let t=0;t<pattern_4_12.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_12[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 22:
+              for(let t=0;t<pattern_4_13.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_13[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 23:
+              for(let t=0;t<pattern_4_14.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_14[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 24:
+              for(let t=0;t<pattern_4_15.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_15[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 25:
+              for(let t=0;t<pattern_4_16.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_16[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 26:
+              for(let t=0;t<pattern_4_17.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_17[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 27:
+              for(let t=0;t<pattern_4_18.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_18[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 28:
+              for(let t=0;t<pattern_4_19.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_19[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 29:
+              for(let t=0;t<pattern_4_20.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_20[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 30:
+              for(let t=0;t<pattern_4_21.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_21[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 31:
+              for(let t=0;t<pattern_4_22.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_22[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 32:
+              for(let t=0;t<pattern_4_23.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_23[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 33:
+              for(let t=0;t<pattern_4_24.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_24[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 34:
+              for(let t=0;t<pattern_4_25.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_25[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 35:
+              for(let t=0;t<pattern_4_26.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_26[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 36:
+              for(let t=0;t<pattern_4_27.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_27[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 37:
+              for(let t=0;t<pattern_4_28.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_28[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 38:
+              for(let t=0;t<pattern_4_29.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_29[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 39:
+              for(let t=0;t<pattern_4_30.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_30[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 40:
+              for(let t=0;t<pattern_4_31.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_31[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 41:
+              for(let t=0;t<pattern_4_32.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_32[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 42:
+              for(let t=0;t<pattern_4_33.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_33[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 43:
+              for(let t=0;t<pattern_4_34.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_34[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 44:
+              for(let t=0;t<pattern_4_35.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_35[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 45:
+              for(let t=0;t<pattern_4_36.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_36[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 46:
+              for(let t=0;t<pattern_4_37.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_37[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 47:
+              for(let t=0;t<pattern_4_38.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_38[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 48:
+              for(let t=0;t<pattern_4_39.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_39[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 49:
+              for(let t=0;t<pattern_4_40.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_40[t])
+                if(temp_data != undefined){
+                  data_win.push(temp_data)
+                }
+              }
+              break;
+            case 50:
+              for(let t=0;t<pattern_4_41.length;t++){
+                let temp_data = data_array.find(card => card.val_display == pattern_4_41[t])
                 if(temp_data != undefined){
                   data_win.push(temp_data)
                 }
