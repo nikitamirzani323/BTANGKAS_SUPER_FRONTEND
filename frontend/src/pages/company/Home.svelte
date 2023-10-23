@@ -47,6 +47,7 @@
     let invoice_totalbonus = 0;
     let invoice_card_codepoin = "";
     let invoice_card_pattern = "";
+    let invoice_card_pattern_sort = "";
     let invoice_card_result = "";
     let invoice_card_win = "";
 
@@ -163,9 +164,35 @@
         invoice_card_pattern = card_pattern;
         invoice_card_result = card_result;
         invoice_card_win = card_win;
+
+        let shuffleArray = []
+        let temp_data = invoice_card_result.split('-')
+        let temp_data_total = temp_data.length
+        invoice_card_pattern_sort = ""
+        for(let i=0;i<temp_data_total;i++) {
+            shuffleArray.push(card_result_data[temp_data[i]])
+        }
+        console.log(invoice_card_result)
+        console.log(shuffleArray)
+        function compareByval_display(a, b) {
+            return a.val_display - b.val_display;
+          }
+        let pattern_array_sort = shuffleArray.sort(compareByval_display);
+        for(let i=0;i<pattern_array_sort.length;i++) {
+        
+            if(i == pattern_array_sort.length-1) {
+                let temp_data = card_result_data.findIndex(card => card.id ==pattern_array_sort[i].id)
+                invoice_card_pattern_sort += temp_data
+            }else{
+                let temp_data = card_result_data.findIndex(card => card.id ==pattern_array_sort[i].id)
+                invoice_card_pattern_sort += temp_data+"-"
+            }
+        }
+        console.log(invoice_card_pattern_sort)
+
         myModal_newentry = new bootstrap.Modal(document.getElementById("modalinvoicedetail"));
         myModal_newentry.show();
-        
+       
     };
     const call_listbet = (e) => {
         sDataListBet = "New"
@@ -1363,9 +1390,11 @@
             </tr>
         </table>
         CARD RESULT<br />
-        {@html card_img(invoice_card_result,72)}<br /><br />
+        {@html card_img(invoice_card_result,85)}<br /><br />
+        CARD RESULT - SORT<br />
+        {@html card_img(invoice_card_pattern_sort,85)}<br /><br />
         CARD WIN<br />
-        {@html card_img2(invoice_card_win,72)}<br /><br />
+        {@html card_img2(invoice_card_win,85)}<br /><br />
 	</slot:template>
 	<slot:template slot="footer">
         
