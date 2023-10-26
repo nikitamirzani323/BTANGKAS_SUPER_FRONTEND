@@ -18,7 +18,7 @@
     let css_loader = "display: none;";
     let msgloader = "";
     let flag_btnsave = true;
-    let idrecord = "";
+    let idrecord = 0;
     let idcompany_field = "";
     let name_field = "";
     let rule_field = "";
@@ -83,9 +83,9 @@
                 body: JSON.stringify({
                     sdata: sData,
                     page:"CURR-SAVE",
-                    companyadminrule_id: idrecord.toUpperCase(),
+                    companyadminrule_id: parseInt(idrecord),
                     companyadminrule_idcompany: idcompany_field,
-                    companyadminrule_nmrule:name_field,
+                    companyadminrule_nmrule:name_field.toUpperCase(),
                     companyadminrule_rule: "",
                 }),
             });
@@ -128,6 +128,18 @@
                 handleSubmit();
                 break;
         }
+    }
+    function uperCase(element) {
+        function onInput(event) {
+            element.value = element.value.toUpperCase();
+            element.value = element.value.replace(/[^A-Z0-9]/gi, '');
+        }
+        element.addEventListener("input", onInput);
+        return {
+            destroy() {
+                element.removeEventListener("input", onInput);
+            },
+        };
     }
 </script>
 
@@ -203,8 +215,7 @@
     modal_size="modal-dialog-centered"
     modal_title={title_page + "/" + sData}
     modal_footer_css="padding:5px;"
-    modal_footer={true}
->
+    modal_footer={true}>
     <slot:template slot="body">
         <div class="mb-3">
             <label for="exampleForm" class="form-label">Company</label>
@@ -221,6 +232,7 @@
             <label for="exampleForm" class="form-label">Name</label>
             <input
                 bind:value={name_field}
+                use:uperCase 
                 type="text"
                 class="form-control required"
                 placeholder="Name"

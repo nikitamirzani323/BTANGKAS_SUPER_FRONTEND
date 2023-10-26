@@ -524,7 +524,7 @@ func CompanyadminruleSave(c *fiber.Ctx) error {
 	type payload_companyadminrulesave struct {
 		Page                       string `json:"page"`
 		Sdata                      string `json:"sdata" `
-		Companyadminrule_id        string `json:"companyadminrule_id"`
+		Companyadminrule_id        int    `json:"companyadminrule_id"`
 		Companyadminrule_idcompany string `json:"companyadminrule_idcompany" `
 		Companyadminrule_nmrule    string `json:"companyadminrule_nmrule" `
 		Companyadminrule_rule      string `json:"companyadminrule_rule" `
