@@ -369,7 +369,9 @@
                 <div class="mb-3">
                     <label for="exampleForm" class="form-label">Username</label>
                     <div class="input-group mb-3">
+                        {#if sData == "New"}
                         <span class="input-group-text" id="basic-addon1">{company_field.toLowerCase()}</span>
+                        {/if}
                         <input
                             use:lowerCase 
                             bind:value={username_field}
